@@ -10,17 +10,6 @@ public class Record {
     private LocalDate date;
     
 
-    //qty is for recording the amount of user after creating, the plan of Record class is to record user activity
-    //such as what user spent on + where the income comes from
-    //Sample output: 
-    //User---------------------------
-    //User Activties = 3 times
-    //Added Income: +300$ from salary
-    //Added Income: +100$ from gift
-    //Added Expense: -100$ on shoes
-    
-
-
     public Record(String type, LocalDate date, double amount, String note) {
         setType(type);
         setDate(date);
