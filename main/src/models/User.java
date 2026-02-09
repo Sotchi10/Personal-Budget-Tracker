@@ -1,6 +1,5 @@
 package models;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,12 +10,7 @@ public class User {
     private String password;
     private double balance;
 
-    private List<Record> record = new ArrayList<>(); 
-
-    //This field is for counting the amount of time that user addincome or addexpense (used in line 73, 78)
-    private int in_count = 0;
-    private int out_count = 0;
-
+    private List<Record> records = new ArrayList<>(); 
 
     // Constructor
     public User(String name, int age, String email, String password) {
@@ -44,13 +38,6 @@ public class User {
         return balance;
     }
 
-    //Get income and expense time 
-    public double getIncomeTime() {
-        return in_count;
-    }
-    public double getExpenseTime() {
-        return out_count;
-    }
 
     // Setters
     public void setName(String name) {
@@ -81,5 +68,14 @@ public class User {
 
     public void decreaseBalance(double amount) {
         balance -= amount;
+    }
+
+    //Methods for records
+    public void addRecords(Record record) {
+        records.add(record);
+    }
+
+    public List<Record> getRecords() {
+        return records;
     }
 }

@@ -1,19 +1,14 @@
 package models;
-
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class Record {
     private String record_id;
     private String type;
+    private String note;
+    private double amount;
     private LocalDate date;
-    private List<String> activities;
-    private static int qty = 0;
-
-    public Record(String type, int amount, LocalDate date, String des) {
-        
-    }
+    
 
     //qty is for recording the amount of user after creating, the plan of Record class is to record user activity
     //such as what user spent on + where the income comes from
@@ -25,38 +20,60 @@ public class Record {
     //Added Expense: -100$ on shoes
     
 
-    //Overall amount of user activity record
-    public static int record_qty() {
-        return qty;
-    }
-    
-  
-    public Record() {
-        qty++;
-        this.record_id = "user" + qty;
-        this.activities = new ArrayList<>();
+
+    public Record(String type, LocalDate date, double amount, String note) {
+        setType(type);
+        setDate(date);
+        setAmount(amount);
+        setNote(note);
     }
 
-    public String getRecord_id(){
+    
+    //Getters
+    public String getType() {
+        return type;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public String getRecord_id() {
         return record_id;
     }
 
-    void addIncome(double amount, String source){
-        String Activity = "Added Income: +" + amount + "$ from " + source;
-        activities.add(Activity);
+    public double getAmount() {
+        return amount;
     }
 
-    void addExpense(double amount, String source){
-        String Activity = "Added Income: -" + amount + "$ from " + source;
-        activities.add(Activity);
+
+    //Setters
+    public void setType(String type) {
+        if (type.isBlank()) throw new IllegalArgumentException("none speicifed type");
+        this.type = type;
     }
 
-    //print all activities
-    public void printactivities(){
-        System.out.println("User---------------------------");
-        for (String Activity: activities){
-            System.out.println(Activity);
-        }
+    public void setDate(LocalDate date) {
+        if (date.equals(null)) throw new IllegalArgumentException("none speicifed tdateype");
+        this.date = date;
     }
+
+    public void setNote(String note) {
+        if (note.isBlank())
+            throw new IllegalArgumentException("none speicifed note");
+        this.note = note;
+    }
+
+
+    public void setAmount(double amount) {
+        if (amount <= 0)
+            throw new IllegalArgumentException();
+        this.amount = amount;
+    }
+
     
 }
