@@ -19,10 +19,8 @@ public class Main {
         String incomeSource = sc.nextLine();
         service.addIncome(user, incomeAmount, incomeSource);
 
-<<<<<<< HEAD
         
         
-=======
         // Get expense from user
         System.out.print("Enter expense amount: ");
         double expenseAmount = sc.nextDouble();
@@ -34,7 +32,6 @@ public class Main {
         // Show results
         System.out.println("\nIncome: " + incomeAmount + " from " + incomeSource);
         System.out.println("Outcome: " + expenseAmount + " for " + expenseItem);
->>>>>>> 209b7d35cb03cc0541f96d5e8ae308c0698782e5
         System.out.println("Your current balance: $" + service.showBalance(user));
 
         sc.close();

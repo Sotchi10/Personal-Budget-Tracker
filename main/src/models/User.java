@@ -11,7 +11,6 @@ public class User {
     private String password;
     private double balance;
 
-<<<<<<< HEAD
     private List<Record> record = new ArrayList<>(); 
 
     //This field is for counting the amount of time that user addincome or addexpense (used in line 73, 78)
@@ -19,8 +18,6 @@ public class User {
     private int out_count = 0;
 
 
-=======
->>>>>>> 209b7d35cb03cc0541f96d5e8ae308c0698782e5
     // Constructor
     public User(String name, int age, String email, String password) {
         setName(name);
@@ -47,7 +44,6 @@ public class User {
         return balance;
     }
 
-<<<<<<< HEAD
     //Get income and expense time 
     public double getIncomeTime() {
         return in_count;
@@ -56,8 +52,6 @@ public class User {
         return out_count;
     }
 
-=======
->>>>>>> 209b7d35cb03cc0541f96d5e8ae308c0698782e5
     // Setters
     public void setName(String name) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException("name is invalid");
