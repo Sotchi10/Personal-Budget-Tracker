@@ -1,11 +1,16 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     private String name;
     private int age;
     private String email;
     private String password;
     private double balance;
+
+    private List<Record> records = new ArrayList<>(); 
 
     // Constructor
     public User(String name, int age, String email, String password) {
@@ -32,6 +37,7 @@ public class User {
     public double getBalance() {
         return balance;
     }
+
 
     // Setters
     public void setName(String name) {
@@ -62,5 +68,14 @@ public class User {
 
     public void decreaseBalance(double amount) {
         balance -= amount;
+    }
+
+    //Methods for records
+    public void addRecords(Record record) {
+        records.add(record);
+    }
+
+    public List<Record> getRecords() {
+        return records;
     }
 }
