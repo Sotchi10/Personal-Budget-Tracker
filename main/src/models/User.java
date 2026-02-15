@@ -9,8 +9,11 @@ public class User {
     private String email;
     private String password;
     private double balance;
+    private double limit_amount;
 
-    private List<Record> records = new ArrayList<>(); 
+    private List<Record> records = new ArrayList<>();
+    
+    private List<WishItems> wishLists = new ArrayList<>();
 
     // Constructor
     public User(String name, int age, String email, String password) {
@@ -38,6 +41,9 @@ public class User {
         return balance;
     }
 
+    public double getLimit() {
+        return limit_amount;
+    }
 
     // Setters
     public void setName(String name) {
@@ -48,6 +54,10 @@ public class User {
     public void setAge(int age) {
         if (age < 18) throw new IllegalArgumentException("age restriction");
         this.age = age;
+    }
+    public void setLimit(double limit_amount) {
+        if (limit_amount <= 0) throw new IllegalArgumentException("invalid");
+        this.limit_amount = limit_amount;
     }
 
     public void setEmail(String email) {
@@ -61,6 +71,8 @@ public class User {
     }
 
 
+
+
     //Methods for user balance
     public void increaseBalance(double amount) {
         balance += amount;
@@ -70,11 +82,27 @@ public class User {
         balance -= amount;
     }
 
+
+
+
+    //Methods for wish items
+    public void addToWish(WishItems item) {
+        
+        wishLists.add(item);
+    }
+
+    public List<WishItems> getWishList() {
+        return wishLists;
+    }
+
+    
+
+
+
     //Methods for records
     public void addRecords(Record record) {
         records.add(record);
     }
-
     public List<Record> getRecords() {
         return records;
     }
