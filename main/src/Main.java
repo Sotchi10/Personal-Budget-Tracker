@@ -7,53 +7,25 @@ import service.BudgetService;
 public class Main {
 
     public static void main(String[] args) {
-
-        String pass_key;
-
+        //Declarations
         Scanner sc = new Scanner(System.in);
         BudgetService service = new BudgetService();
-
-        // Create user
-        System.out.println("===== CREATE USER =====");
-        System.out.print("Enter name: ");
-        String name = sc.nextLine();
-
-        System.out.print("Enter age: ");
-        int age = sc.nextInt();
-        sc.nextLine();
-
-        System.out.print("Enter email: ");
-        String email = sc.nextLine();
-
-        System.out.print("Enter password: ");
-        String password = sc.nextLine();
-
-        System.out.println("Create passkey: ");
-        String passkey = sc.nextLine();
-
-
-        User user = new User(name, age, email, password, passkey);
+        User user = createUser(sc);
         boolean running = true;
 
         while (running) {
-            System.out.println("\n===== BUDGET MENU =====");
-            System.out.println("1. Add Income");
-            System.out.println("2. Add Expense");
-            System.out.println("3. Add Saving");
-            System.out.println("4. Use Saving");
-            System.out.println("5. Show Transcript");
-            System.out.println("6. Set Budget Limit");
-            System.out.println("7. Add Wish Item");
-            System.out.println("8. Show Wish List");
-            System.out.println("9. Exit");
-            System.out.print("Choose option: ");
+            //Get current date
+            LocalDate date = LocalDate.now();
+
+            //Menu
+            systemMenu();
 
             int choice = sc.nextInt();
             sc.nextLine();
 
-            LocalDate date = LocalDate.now();
-
+            String pass_key;
             switch (choice) {
+                
                 case 1:
                     System.out.print("Enter income amount: ");
                     double incomeAmount = sc.nextDouble();
@@ -73,7 +45,7 @@ public class Main {
                     double expenseAmount = sc.nextDouble();
                     sc.nextLine();
 
-                    //modify passkey
+                    // modify passkey
                     System.out.print("Enter passkey to continue: ");
                     pass_key = sc.nextLine();
 
@@ -134,5 +106,42 @@ public class Main {
         }
 
         sc.close();
+    }
+
+    private static void systemMenu() {
+        System.out.println("\n===== BUDGET MENU =====");
+        System.out.println("1. Add Income");
+        System.out.println("2. Add Expense");
+        System.out.println("3. Add Saving");
+        System.out.println("4. Use Saving");
+        System.out.println("5. Show Transcript");
+        System.out.println("6. Set Budget Limit");
+        System.out.println("7. Add Wish Item");
+        System.out.println("8. Show Wish List");
+        System.out.println("9. Exit");
+        System.out.print("Choose option: ");
+    }
+
+    private static User createUser(Scanner sc) {
+        // Create user
+        System.out.println("===== CREATE USER =====");
+        System.out.print("Enter name: ");
+        String name = sc.nextLine();
+
+        System.out.print("Enter age: ");
+        int age = sc.nextInt();
+        sc.nextLine();
+
+        System.out.print("Enter email: ");
+        String email = sc.nextLine();
+
+        System.out.print("Enter password: ");
+        String password = sc.nextLine();
+
+        System.out.println("Create passkey: ");
+        String passkey = sc.nextLine();
+
+        User user = new User(name, age, email, password, passkey);
+        return user;
     }
 }

@@ -65,8 +65,8 @@ public class BudgetService {
             System.out.println("You cant purchase now");
             return;
         }
-        if (saving > user.getBalance()) {
-            System.out.println("You dont have enough balance!");
+        if (saving > user.getSaving()) {
+            System.out.println("You failed to withdraw");
             return;
         }
         if (saving <= 0)
