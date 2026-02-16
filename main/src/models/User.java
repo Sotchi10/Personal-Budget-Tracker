@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class User {
@@ -8,18 +9,21 @@ public class User {
     private int age;
     private String email;
     private String password;
+    private String passkey;
     private double balance;
     private double limit_amount;
+    private double saving_amount;
 
     private List<Record> records = new ArrayList<>();
     
     private List<WishItems> wishLists = new ArrayList<>();
 
     // Constructor
-    public User(String name, int age, String email, String password) {
+    public User(String name, int age, String email, String password, String passkey) {
         setName(name);
         setAge(age);
         setEmail(email);
+        setPasskey(passkey);
         setPassword(password);
         this.balance = 0;
     }
@@ -45,6 +49,15 @@ public class User {
         return limit_amount;
     }
 
+    public double getSaving() {
+        return saving_amount;
+    }
+
+
+    public String getPasskey() {
+        return passkey;
+    }
+
     // Setters
     public void setName(String name) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException("name is invalid");
@@ -56,7 +69,7 @@ public class User {
         this.age = age;
     }
     public void setLimit(double limit_amount) {
-        if (limit_amount <= 0) throw new IllegalArgumentException("invalid");
+        if (limit_amount < 0) throw new IllegalArgumentException("invalid");
         this.limit_amount = limit_amount;
     }
 
@@ -66,11 +79,18 @@ public class User {
     }
 
     public void setPassword(String password) {
-        if (password == null || password.isBlank()) throw new IllegalArgumentException("password is invalid");
+        if (password == null || password.isBlank())
+            throw new IllegalArgumentException("password is invalid");
         this.password = password;
     }
 
-
+    public void setPasskey(String passkey) {
+        if (!(passkey.length() == 4 && passkey.matches("\\d{4}"))) {
+            System.out.println("Passkey must contain 4 digits");
+            return;
+        }
+        this.passkey = passkey;
+    }
 
 
     //Methods for user balance
@@ -82,28 +102,30 @@ public class User {
         balance -= amount;
     }
 
-
-
-
     //Methods for wish items
     public void addToWish(WishItems item) {
-        
         wishLists.add(item);
     }
 
     public List<WishItems> getWishList() {
-        return wishLists;
+        return Collections.unmodifiableList(wishLists);
     }
-
-    
-
 
 
     //Methods for records
     public void addRecords(Record record) {
         records.add(record);
     }
+
     public List<Record> getRecords() {
-        return records;
+        return Collections.unmodifiableList(records);
+    }
+    
+    //Method for saving budget
+    public void addSaving(double amount) {
+        saving_amount += amount;
+    }
+    public void withdrawSaving(double amount) {
+        saving_amount -= amount;
     }
 }

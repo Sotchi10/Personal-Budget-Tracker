@@ -4,13 +4,11 @@ public class WishItems {
     private String item_name;
     private double item_price;
 
-    public void WishItem(String item_name, double item_price) {
+    public WishItems(String item_name, double item_price) {
         setItem_name(item_name);
         setItem_price(item_price);
     }
 
-
-    
 
     public String getItem_name() {
         return item_name;
@@ -27,9 +25,6 @@ public class WishItems {
         percentage = Math.min(percentage, 100);
         return Math.round(percentage * 100.0) / 100.0;
     }
-
-
-
 
     //Setters
     public void setItem_name(String item_name) {

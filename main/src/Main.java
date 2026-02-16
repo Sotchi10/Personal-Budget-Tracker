@@ -8,6 +8,8 @@ public class Main {
 
     public static void main(String[] args) {
 
+        String pass_key;
+
         Scanner sc = new Scanner(System.in);
         BudgetService service = new BudgetService();
 
@@ -26,19 +28,24 @@ public class Main {
         System.out.print("Enter password: ");
         String password = sc.nextLine();
 
-        User user = new User(name, age, email, password);
+        System.out.println("Create passkey: ");
+        String passkey = sc.nextLine();
 
+
+        User user = new User(name, age, email, password, passkey);
         boolean running = true;
 
         while (running) {
             System.out.println("\n===== BUDGET MENU =====");
             System.out.println("1. Add Income");
             System.out.println("2. Add Expense");
-            System.out.println("3. Show Transcript");
-            System.out.println("4. Set Budget Limit");
-            System.out.println("5. Add Saving Item");
-            System.out.println("6. Show Saving List");
-            System.out.println("7. Exit");
+            System.out.println("3. Add Saving");
+            System.out.println("4. Use Saving");
+            System.out.println("5. Show Transcript");
+            System.out.println("6. Set Budget Limit");
+            System.out.println("7. Add Wish Item");
+            System.out.println("8. Show Wish List");
+            System.out.println("9. Exit");
             System.out.print("Choose option: ");
 
             int choice = sc.nextInt();
@@ -59,21 +66,42 @@ public class Main {
                     break;
 
                 case 2:
+                    System.out.print("Enter expense item: ");
+                    String expenseItem = sc.nextLine();
+
                     System.out.print("Enter expense amount: ");
                     double expenseAmount = sc.nextDouble();
                     sc.nextLine();
 
-                    System.out.print("Enter expense item: ");
-                    String expenseItem = sc.nextLine();
+                    //modify passkey
+                    System.out.print("Enter passkey to continue: ");
+                    pass_key = sc.nextLine();
 
-                    service.addExpense(user, expenseAmount, "expense", date, expenseItem);
+                    service.addExpense(user, expenseAmount, "expense", date, expenseItem, pass_key);
                     break;
 
                 case 3:
-                    service.showTranscript(user);
+                    System.out.print("Enter saving amount: ");
+                    double savingAmount = sc.nextDouble();
+                    sc.nextLine();
+
+                    service.addSavings(user, savingAmount);
                     break;
 
                 case 4:
+                    System.out.print("Enter amount you want to use: ");
+                    double useAmount = sc.nextDouble();
+                    sc.nextLine();
+
+                    System.out.print("Enter passkey to continue: ");
+                    pass_key = sc.nextLine();
+                    service.useSavings(user, useAmount, pass_key);
+                    break;
+                case 5:
+                    service.showTranscript(user);
+                    break;
+
+                case 6:
                     System.out.print("Enter budget limit: ");
                     double limit = sc.nextDouble();
                     sc.nextLine();
@@ -81,7 +109,7 @@ public class Main {
                     service.limitBudget(user, limit);
                     break;
 
-                case 5:
+                case 7:
                     System.out.print("Enter saving item name: ");
                     String item = sc.nextLine();
 
@@ -92,11 +120,11 @@ public class Main {
                     service.addWishList(user, item, target);
                     break;
 
-                case 6:
+                case 8:
                     service.showSavingList(user);
                     break;
 
-                case 7:
+                case 9:
                     running = false;
                     break;
 

@@ -47,7 +47,7 @@ public class Record {
     }
 
     public void setDate(LocalDate date) {
-        if (date.equals(null)) throw new IllegalArgumentException("none speicifed tdateype");
+        if (date == null) throw new IllegalArgumentException("none speicifed tdateype");
         this.date = date;
     }
 
