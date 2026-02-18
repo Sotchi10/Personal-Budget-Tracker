@@ -25,7 +25,6 @@ public class Main {
 
             String pass_key;
             switch (choice) {
-                
                 case 1:
                     System.out.print("Enter income amount: ");
                     double incomeAmount = sc.nextDouble();
