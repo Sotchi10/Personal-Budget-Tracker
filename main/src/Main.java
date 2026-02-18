@@ -1,6 +1,5 @@
 import java.time.LocalDate;
 import java.util.Scanner;
-
 import models.User;
 import service.BudgetService;
 
@@ -123,25 +122,82 @@ public class Main {
     }
 
     private static User createUser(Scanner sc) {
-        // Create user
+
         System.out.println("===== CREATE USER =====");
-        System.out.print("Enter name: ");
-        String name = sc.nextLine();
 
-        System.out.print("Enter age: ");
-        int age = sc.nextInt();
-        sc.nextLine();
+        String name;
+        int age;
+        String email;
+        String password;
+        String passkey;
 
-        System.out.print("Enter email: ");
-        String email = sc.nextLine();
+        // NAME
+        while (true) {
+            try {
+                System.out.print("Enter name: ");
+                name = sc.nextLine();
+                if (name == null || name.isBlank())
+                    throw new IllegalArgumentException("Name cannot be empty.");
+                break;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
-        System.out.print("Enter password: ");
-        String password = sc.nextLine();
+        // AGE
+        while (true) {
+            try {
+                System.out.print("Enter age: ");
+                age = Integer.parseInt(sc.nextLine());
+                if (age < 18)
+                    throw new IllegalArgumentException("Age must be at least 18.");
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Age must be a number.");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
-        System.out.println("Create passkey: ");
-        String passkey = sc.nextLine();
+        // EMAIL
+        while (true) {
+            try {
+                System.out.print("Enter email: ");
+                email = sc.nextLine();
+                User.validateEmail(email);
+                break;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
-        User user = new User(name, age, email, password, passkey);
-        return user;
+        // PASSWORD
+        while (true) {
+            try {
+                System.out.print("Enter password: ");
+                password = sc.nextLine();
+                User.validatePassword(password);
+                break;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        // PASSKEY
+        while (true) {
+            try {
+                System.out.print("Create passkey (4 digits): ");
+                passkey = sc.nextLine();
+                if (!passkey.matches("\\d{4}"))
+                    throw new IllegalArgumentException("Passkey must be exactly 4 digits.");
+                break;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        System.out.println("\n===== Account is successfully created =====\n");
+        return new User(name, age, email, password, passkey);
     }
+
 }
