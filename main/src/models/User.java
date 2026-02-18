@@ -73,14 +73,46 @@ public class User {
         this.limit_amount = limit_amount;
     }
 
+    public static void validateEmail(String email) {
+        if (email == null || email.isBlank())
+            throw new IllegalArgumentException("\nEmail cannot be empty\n");
+
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+
+        if (!email.matches(emailRegex))
+            throw new IllegalArgumentException("\nInvalid email format\n");
+    }
+
     public void setEmail(String email) {
-        if (email == null || email.isBlank()) throw new IllegalArgumentException("email is invalid");
+        validateEmail(email);
         this.email = email;
     }
 
-    public void setPassword(String password) {
+    public static void validatePassword(String password) {
         if (password == null || password.isBlank())
-            throw new IllegalArgumentException("password is invalid");
+            throw new IllegalArgumentException("Password cannot be empty");
+
+        String passwordRegex =
+            "^(?=.*[0-9])" +      // Password has at least one number
+            "(?=.*[a-z])" +       // at least one lowercase letter
+            "(?=.*[A-Z])" +       // at least one uppercase letter
+            "(?=.*[@#$%^&+=!])" + // at least one special char
+            "(?=\\S+$)" +         // no space
+            ".{8,}$";             // at least 8 characters
+
+        if (!password.matches(passwordRegex))
+            throw new IllegalArgumentException(
+                    "\nPassword must contain at least:\n" +
+                    "- 8 characters\n" +
+                    "- 1 uppercase\n" +
+                    "- 1 lowercase\n" +
+                    "- 1 number\n" +
+                    "- 1 special character\n"
+            );
+    }
+
+    public void setPassword(String password) {
+        validatePassword(password);
         this.password = password;
     }
 
