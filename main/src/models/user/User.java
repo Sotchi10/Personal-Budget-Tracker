@@ -1,8 +1,10 @@
-package models;
+package models.user;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import models.transactions.Record;
+import models.wishlists.WishItems;
 
 public class User {
     private String name;
@@ -15,7 +17,6 @@ public class User {
     private double saving_amount;
 
     private List<Record> records = new ArrayList<>();
-    
     private List<WishItems> wishLists = new ArrayList<>();
 
     // Constructor
@@ -53,7 +54,6 @@ public class User {
         return saving_amount;
     }
 
-
     public String getPasskey() {
         return passkey;
     }
@@ -65,9 +65,11 @@ public class User {
     }
 
     public void setAge(int age) {
-        if (age < 18) throw new IllegalArgumentException("age restriction");
+        if (age < 18)
+            throw new IllegalArgumentException("age restriction");
         this.age = age;
     }
+    
     public void setLimit(double limit_amount) {
         if (limit_amount < 0) throw new IllegalArgumentException("invalid");
         this.limit_amount = limit_amount;
@@ -143,7 +145,6 @@ public class User {
         return Collections.unmodifiableList(wishLists);
     }
 
-
     //Methods for records
     public void addRecords(Record record) {
         records.add(record);
@@ -157,6 +158,7 @@ public class User {
     public void addSaving(double amount) {
         saving_amount += amount;
     }
+    
     public void withdrawSaving(double amount) {
         saving_amount -= amount;
     }
