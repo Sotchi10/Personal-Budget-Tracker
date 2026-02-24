@@ -1,4 +1,4 @@
-package models.transactions;
+package models;
 import java.time.LocalDate;
 
 
@@ -7,9 +7,9 @@ public class Record {
     private String type;
     private String note;
     private double amount;
-    private LocalDate date; 
+    private LocalDate date;
     
-    //Constructors
+
     public Record(String type, LocalDate date, double amount, String note) {
         setType(type);
         setDate(date);
@@ -17,6 +17,7 @@ public class Record {
         setNote(note);
     }
 
+    
     //Getters
     public String getType() {
         return type;
@@ -38,6 +39,7 @@ public class Record {
         return amount;
     }
 
+
     //Setters
     public void setType(String type) {
         if (type.isBlank()) throw new IllegalArgumentException("none speicifed type");
@@ -55,10 +57,12 @@ public class Record {
         this.note = note;
     }
 
+
     public void setAmount(double amount) {
         if (amount <= 0)
             throw new IllegalArgumentException();
         this.amount = amount;
     }
 
+    
 }

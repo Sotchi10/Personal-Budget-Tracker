@@ -1,17 +1,15 @@
 import java.time.LocalDate;
 import java.util.Scanner;
-import models.user.User;
+import models.User;
 import service.BudgetService;
 
 public class Main {
 
     public static void main(String[] args) {
         //Declarations
-        String pass_key;
-        boolean isZero;
         Scanner sc = new Scanner(System.in);
-        User user = createUser(sc);
         BudgetService service = new BudgetService();
+        User user = createUser(sc);
         boolean running = true;
 
         while (running) {
@@ -24,13 +22,9 @@ public class Main {
             int choice = sc.nextInt();
             sc.nextLine();
 
-            
-  
+            String pass_key;
             switch (choice) {
-<<<<<<< HEAD
-=======
-
->>>>>>> cc767280937e9549c752d5274883a9254a122b08
+                
                 case 1:
                     System.out.print("Enter income amount: ");
                     double incomeAmount = sc.nextDouble();
@@ -43,10 +37,6 @@ public class Main {
                     break;
 
                 case 2:
-                    isZero = service.checkBalance(user);
-                    if (isZero)
-                        break;
-
                     System.out.print("Enter expense item: ");
                     String expenseItem = sc.nextLine();
 
@@ -70,10 +60,6 @@ public class Main {
                     break;
 
                 case 4:
-                    isZero = service.checkSavings(user);
-                    if (isZero)
-                        break;
-
                     System.out.print("Enter amount you want to use: ");
                     double useAmount = sc.nextDouble();
                     sc.nextLine();
@@ -110,17 +96,17 @@ public class Main {
                     break;
 
                 case 9:
-
+                    running = false;
                     break;
 
                 default:
                     System.out.println("Invalid option");
             }
         }
+
         sc.close();
     }
 
-    //System Menu
     private static void systemMenu() {
         System.out.println("\n===== BUDGET MENU =====");
         System.out.println("1. Add Income");
@@ -135,7 +121,6 @@ public class Main {
         System.out.print("Choose option: ");
     }
 
-    //Create user input
     private static User createUser(Scanner sc) {
 
         System.out.println("===== CREATE USER =====");
