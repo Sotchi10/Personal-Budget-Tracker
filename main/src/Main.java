@@ -24,13 +24,8 @@ public class Main {
             int choice = sc.nextInt();
             sc.nextLine();
 
-            
-  
             switch (choice) {
-<<<<<<< HEAD
-=======
 
->>>>>>> cc767280937e9549c752d5274883a9254a122b08
                 case 1:
                     System.out.print("Enter income amount: ");
                     double incomeAmount = sc.nextDouble();
