@@ -1,9 +1,9 @@
 package service;
-import models.User;
-import models.WishItems;
+import models.user.User;
+import models.wishlist.WishItems;
 
 import java.time.LocalDate;
-import models.Record;
+import models.transactions.Record;
 
 
 public class BudgetService {

@@ -1,12 +1,13 @@
 import java.time.LocalDate;
 import java.util.Scanner;
-import models.User;
+import models.user.User;
 import service.BudgetService;
 
 public class Main {
 
     public static void main(String[] args) {
         //Declarations
+        String pass_key;
         Scanner sc = new Scanner(System.in);
         BudgetService service = new BudgetService();
         User user = createUser(sc);
@@ -22,14 +23,8 @@ public class Main {
             int choice = sc.nextInt();
             sc.nextLine();
 
-<<<<<<< HEAD
             switch (choice) {
 
-=======
-            String pass_key;
-            switch (choice) {
-                
->>>>>>> e0295fcd5ffad00647de949e7d750fa8a3f4a6bb
                 case 1:
                     System.out.print("Enter income amount: ");
                     double incomeAmount = sc.nextDouble();
@@ -133,7 +128,7 @@ public class Main {
         String email;
         String password;
         String passkey;
-
+        
         // NAME
         while (true) {
             try {
