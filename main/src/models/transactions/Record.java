@@ -1,4 +1,4 @@
-package models;
+package models.transactions;
 import java.time.LocalDate;
 
 
@@ -7,7 +7,7 @@ public class Record {
     private String type;
     private String note;
     private double amount;
-    private LocalDate date;
+    private LocalDate date; 
     
     //Constructors
     public Record(String type, LocalDate date, double amount, String note) {

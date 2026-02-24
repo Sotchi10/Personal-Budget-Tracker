@@ -1,4 +1,4 @@
-package models;
+package models.wishlists;
 
 public class WishItems {
     private String item_name;

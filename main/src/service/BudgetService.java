@@ -1,9 +1,9 @@
 package service;
 
-import models.User;
-import models.WishItems;
+import models.user.User;
+import models.wishlists.WishItems;
+import models.transactions.Record;
 import java.time.LocalDate;
-import models.Record;
 
 public class BudgetService {
 
@@ -46,7 +46,7 @@ public class BudgetService {
             System.out.println("Note cannot be empty");
             return;
         }
-        if (!(passkey.matches(user.getPasskey()))) {
+        if (!(passkey.equals(user.getPasskey()))) {
             System.out.println("Wrong passkey");
             return;
         }
@@ -80,13 +80,13 @@ public class BudgetService {
             return;
         }
 
-        user.addSaving(saving);
         user.decreaseBalance(saving);
+        user.addSaving(saving);
         System.out.println("Deposit successful: +$" + saving);
     }
 
     public boolean checkSavings(User user) {
-        if (user.getBalance() == 0) {
+        if (user.getSaving() == 0) {
             System.out.println("Your savings is currently $0.");
             return true;
         }
@@ -95,7 +95,7 @@ public class BudgetService {
 
     public void useSavings(User user, double saving, String passkey) {
 
-        if (!(passkey.matches(user.getPasskey()))) {
+        if (!(passkey.equals(user.getPasskey()))) {
             System.out.println("You cant purchase now");
             return;
         }

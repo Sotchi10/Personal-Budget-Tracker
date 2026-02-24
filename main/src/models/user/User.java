@@ -1,8 +1,10 @@
-package models;
+package models.user;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import models.transactions.Record;
+import models.wishlists.WishItems;
 
 public class User {
     private String name;

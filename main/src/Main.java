@@ -1,6 +1,6 @@
 import java.time.LocalDate;
 import java.util.Scanner;
-import models.User;
+import models.user.User;
 import service.BudgetService;
 
 public class Main {
