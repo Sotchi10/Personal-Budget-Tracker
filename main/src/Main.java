@@ -134,9 +134,7 @@ public class Main {
 
     //Create user input
     private static User createUser(Scanner sc) {
-
         System.out.println("===== CREATE USER =====");
-
         String name;
         int age;
         String email;
