@@ -24,8 +24,6 @@ public class Main {
             int choice = sc.nextInt();
             sc.nextLine();
 
-            
-  
             switch (choice) {
 
                 case 1:
