@@ -4,7 +4,7 @@ import models.user.User;
 import service.BudgetService;
 
 public class Main {
-
+    
     public static void main(String[] args) {
         //Declarations
         String pass_key;
@@ -12,7 +12,7 @@ public class Main {
         BudgetService service = new BudgetService();
         User user = createUser(sc);
         boolean running = true;
-
+        
         while (running) {
             //Get current date
             LocalDate date = LocalDate.now();
