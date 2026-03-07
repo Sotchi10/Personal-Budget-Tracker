@@ -2,25 +2,21 @@ package models.transactions;
 import java.time.LocalDate;
 
 
-public class Record {
+public abstract class Record {
     private String record_id;
-    private String type;
     private String note;
     private double amount;
     private LocalDate date; 
     
     //Constructors
-    public Record(String type, LocalDate date, double amount, String note) {
-        setType(type);
+    public Record(LocalDate date, double amount, String note) {
         setDate(date);
         setAmount(amount);
         setNote(note);
     }
 
     //Getters
-    public String getType() {
-        return type;
-    }
+    public abstract String getType();
 
     public String getNote() {
         return note;
@@ -39,11 +35,6 @@ public class Record {
     }
 
     //Setters
-    public void setType(String type) {
-        if (type.isBlank()) throw new IllegalArgumentException("none speicifed type");
-        this.type = type;
-    }
-
     public void setDate(LocalDate date) {
         if (date == null) throw new IllegalArgumentException("none speicifed tdateype");
         this.date = date;

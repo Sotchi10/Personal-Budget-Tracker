@@ -3,12 +3,14 @@ package service;
 import models.user.User;
 import models.wishlists.WishItems;
 import models.transactions.Record;
+import models.transactions.IncomeRecord;
+import models.transactions.ExpenseRecord;
 import java.time.LocalDate;
 
 public class BudgetService {
 
     // Income
-    public void addIncome(User user, double amount, String type, LocalDate date, String note) {
+    public void addIncome(User user, double amount, LocalDate date, String note) {
         if (amount <= 0) {
             System.out.println("Income amount must be greater than 0.");
             return;
@@ -18,7 +20,7 @@ public class BudgetService {
             return;
         }
         user.increaseBalance(amount);
-        Record record = new Record(type, date, amount, note);
+        Record record = new IncomeRecord(date, amount, note);
         user.addRecords(record);
         System.out.println("\n--You gained: $" + amount + " from " + note + "--");
     }
@@ -32,7 +34,7 @@ public class BudgetService {
     }
 
     // Expense
-    public void addExpense(User user, double amount, String type, LocalDate date, String note, String passkey) {
+    public void addExpense(User user, double amount, LocalDate date, String note, String passkey) {
 
         if (amount <= 0) {
             System.out.println("Amount must be positive");
@@ -64,7 +66,7 @@ public class BudgetService {
         }
 
         user.decreaseBalance(amount);
-        Record record = new Record(type, date, amount, note);
+        Record record = new ExpenseRecord(date, amount, note);
         user.addRecords(record);
         System.out.println("\n--You spent: $" + amount + " on " + note + "--");
     }

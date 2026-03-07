@@ -34,7 +34,7 @@ public class Main {
                     System.out.print("Enter income source: ");
                     String incomeNote = sc.nextLine();
 
-                    service.addIncome(user, incomeAmount, "income", date, incomeNote);
+                    service.addIncome(user, incomeAmount, date, incomeNote);
                     break;
 
                 case 2:
@@ -53,7 +53,7 @@ public class Main {
                     System.out.print("Enter passkey to continue: ");
                     pass_key = sc.nextLine();
 
-                    service.addExpense(user, expenseAmount, "expense", date, expenseItem, pass_key);
+                    service.addExpense(user, expenseAmount, date, expenseItem, pass_key);
                     break;
 
                 case 3:
