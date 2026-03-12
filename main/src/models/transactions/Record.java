@@ -10,13 +10,21 @@ public abstract class Record {
     
     //Constructors
     public Record(LocalDate date, double amount, String note) {
-        setDate(date);
-        setAmount(amount);
-        setNote(note);
+        if (date == null)
+            throw new IllegalArgumentException("none speicifed tdateype");
+        if (note.isBlank())
+            throw new IllegalArgumentException("none speicifed note");
+        if (amount <= 0)
+            throw new IllegalArgumentException();
+        this.note = note;
+        this.date = date;
+        this.amount = amount;
     }
 
     //Getters
-    public abstract String getType();
+    public abstract TransactionType getType();
+
+    public abstract String format();
 
     public String getNote() {
         return note;
@@ -32,24 +40,6 @@ public abstract class Record {
 
     public double getAmount() {
         return amount;
-    }
-
-    //Setters
-    public void setDate(LocalDate date) {
-        if (date == null) throw new IllegalArgumentException("none speicifed tdateype");
-        this.date = date;
-    }
-
-    public void setNote(String note) {
-        if (note.isBlank())
-            throw new IllegalArgumentException("none speicifed note");
-        this.note = note;
-    }
-
-    public void setAmount(double amount) {
-        if (amount <= 0)
-            throw new IllegalArgumentException();
-        this.amount = amount;
     }
 
 }

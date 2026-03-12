@@ -3,30 +3,34 @@ package service;
 import models.user.User;
 import models.wishlists.WishItems;
 import models.transactions.Record;
+import models.transactions.AddSavingRecord;
+import models.transactions.TransactionType;
 import models.transactions.IncomeRecord;
 import models.transactions.ExpenseRecord;
 import java.time.LocalDate;
+
+import auth.AccountAuth;
+import models.account.Account;
 
 public class BudgetService {
 
     // Income
     public void addIncome(User user, double amount, LocalDate date, String note) {
+        Account account = user.getAccount();
         if (amount <= 0) {
             System.out.println("Income amount must be greater than 0.");
             return;
         }
-        if (note == null || note.isBlank()) {
-            System.out.println("Note cannot be empty.");
-            return;
-        }
-        user.increaseBalance(amount);
+
+        account.deposit(amount);
         Record record = new IncomeRecord(date, amount, note);
-        user.addRecords(record);
+        account.addRecord(record);
         System.out.println("\n--You gained: $" + amount + " from " + note + "--");
     }
 
     public boolean checkBalance(User user) {
-        if (user.getBalance() == 0) {
+        Account account = user.getAccount();
+        if (account.getBalance() == 0) {
             System.out.println("Your balance is currently $0.");
             return true;
         }
@@ -36,11 +40,12 @@ public class BudgetService {
     // Expense
     public void addExpense(User user, double amount, LocalDate date, String note, String passkey) {
 
+        Account account = user.getAccount();
         if (amount <= 0) {
             System.out.println("Amount must be positive");
             return;
         }
-        if (amount > user.getBalance()) {
+        if (amount > account.getBalance()) {
             System.out.println("Insufficient balance");
             return;
         }
@@ -48,32 +53,30 @@ public class BudgetService {
             System.out.println("Note cannot be empty");
             return;
         }
-        if (!(passkey.equals(user.getPasskey()))) {
-            System.out.println("Wrong passkey");
+
+        // Verify Passkey before purchase
+        AccountAuth auth = new AccountAuth();
+        if (!auth.verifyPasskey(user, passkey)) {
+            System.out.println("Wrong passkey, transaction cancelled.");
             return;
         }
 
-        // Check through Record to see if user spend passed the limit
-        double countAmount = amount;
-        for (Record r : user.getRecords()) {
-            if (r.getType().equalsIgnoreCase("expense")) {
-                countAmount += r.getAmount();
-            }
-        }
-        if (countAmount > user.getLimit() && user.getLimit() != 0) {
-            System.out.println("You spent over you limit price");
+        // Check through Record to see if account spend passed the limit
+        if (account.getLimitAmount() != 0 && account.getTotalExpense() + amount > account.getLimitAmount()) {
+            System.out.println("You spent over your limit price");
             return;
         }
 
-        user.decreaseBalance(amount);
+        account.withdraw(amount);
         Record record = new ExpenseRecord(date, amount, note);
-        user.addRecords(record);
+        account.addRecord(record);
         System.out.println("\n--You spent: $" + amount + " on " + note + "--");
     }
 
     // Add and withdraw saving
-    public void addSavings(User user, double saving) {
-        if (saving > user.getBalance()) {
+    public void addSavings(User user, double saving, LocalDate date, String note) {
+        Account account = user.getAccount();
+        if (saving > account.getBalance()) {
             System.out.println("Insufficient balance");
             return;
         }
@@ -82,26 +85,25 @@ public class BudgetService {
             return;
         }
 
-        user.decreaseBalance(saving);
-        user.addSaving(saving);
+        account.addSaving(saving);
+        Record record = new AddSavingRecord(date, saving, note);
+        account.addRecord(record);
         System.out.println("Deposit successful: +$" + saving);
     }
 
     public boolean checkSavings(User user) {
-        if (user.getSaving() == 0) {
+        Account account = user.getAccount();
+        if (account.getSavingAmount() == 0) {
             System.out.println("Your savings is currently $0.");
             return true;
         }
         return false;
     }
 
-    public void useSavings(User user, double saving, String passkey) {
+    public void useSavings(User user, LocalDate date, double saving, String note, String passkey) {
 
-        if (!(passkey.equals(user.getPasskey()))) {
-            System.out.println("You cant purchase now");
-            return;
-        }
-        if (saving > user.getSaving()) {
+        Account account = user.getAccount();
+        if (saving > account.getSavingAmount()) {
             System.out.println("You failed to withdraw");
             return;
         }
@@ -110,9 +112,29 @@ public class BudgetService {
             return;
         }
 
-        user.withdrawSaving(saving);
-        user.increaseBalance(saving);
+        // Verify passkey before withdraw
+        AccountAuth auth = new AccountAuth();
+        if (!auth.verifyPasskey(user, passkey)) {
+            System.out.println("Wrong passkey, transaction cancelled.");
+            return;
+        }
+
+        account.withdrawSaving(saving);
+        Record record = new AddSavingRecord(date, saving, note);
+        account.addRecord(record);
         System.out.println("Withdrawal successful: -$" + saving + "from your savings");
+    }
+
+    // Limit Budget
+    public void limitBudget(User user, double limit_amount) {
+        Account account = user.getAccount();
+        account.setLimit(limit_amount);
+    }
+
+    // Balance
+    public double showBalance(User user) {
+        Account account = user.getAccount();
+        return account.getBalance();
     }
 
     // WishList
@@ -121,26 +143,17 @@ public class BudgetService {
         user.addToWish(item);
     }
 
-    // Limit Budget
-    public void limitBudget(User user, double limit_amount) {
-        user.setLimit(limit_amount);
-    }
-
-    // Balance
-    public double showBalance(User user) {
-        return user.getBalance();
-    }
-
     // SavingWishList
-    public void showSavingList(User user) {
+    public void showWishList(User user) {
+        Account account = user.getAccount();
         System.out.println("================== Wish List ==================");
         if (user.getWishList().isEmpty()) {
             System.out.println("No items added yet");
         } else {
-            System.out.println("Current amount of your saving: $" + user.getSaving());
+            System.out.println("Current amount of your saving: $" + account.getSavingAmount());
             for (WishItems i : user.getWishList()) {
                 System.out.println("Item name: " + i.getItem_name() + "\n" + "Price: $" + i.getItem_price());
-                System.out.println("Saving Progress: " + i.calculatePercentage(user.getSaving(), i.getItem_price()) + "%");
+                System.out.println("Saving Progress: " + i.calculatePercentage(account.getSavingAmount(), i.getItem_price()) + "%");
             }
         }
 
@@ -149,24 +162,28 @@ public class BudgetService {
 
     // Transcript
     public void showTranscript(User user) {
+        Account account = user.getAccount();
         System.out.println("================== Transcript ==================");
-        if (user.getRecords().isEmpty()) {
+        if (account.getRecords().isEmpty()) {
             System.out.println("No records yet");
         } else {
-            System.out.println("Current saving: $" + user.getSaving());
-            System.out.println("Current limited your budget: $" + user.getLimit());
+            System.out.println("Current saving: $" + account.getSavingAmount());
+            System.out.println("Current limited your budget: $" + account.getLimitAmount());
             System.out.println("Type  | " + "Amount" + " | " + "Notes" + " | " + "Date");
-            for (Record r : user.getRecords()) {
-                if (r.getType().equalsIgnoreCase("income")) {
-                    System.out.println("Income  | +$" + r.getAmount() + " | " + r.getNote() + " | " + r.getDate());
-
-                } else if (r.getType().equalsIgnoreCase("expense")) {
-                    System.out.println("Expense | -$" + r.getAmount() + " | " + r.getNote() + " | " + r.getDate());
+            for (Record r : account.getRecords()) {
+                if (r.getType().equals(TransactionType.INCOME)) {
+                    System.out.println(r.format());
+                } else if (r.getType().equals(TransactionType.EXPENSE)) {
+                    System.out.println(r.format());
+                } else if (r.getType().equals(TransactionType.ADDSAVING)) {
+                    System.out.println(r.format());
+                } else if (r.getType().equals(TransactionType.USESAVING)) {
+                    System.out.println(r.format());
                 }
             }
         }
         System.out.println("================================================");
-        System.out.println("Current Balance: $" + user.getBalance());
+        System.out.println("Current Balance: $" + account.getBalance());
     }
 
 }

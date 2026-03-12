@@ -1,5 +1,6 @@
 import java.time.LocalDate;
 import java.util.Scanner;
+
 import models.user.User;
 import service.BudgetService;
 
@@ -61,7 +62,10 @@ public class Main {
                     double savingAmount = sc.nextDouble();
                     sc.nextLine();
 
-                    service.addSavings(user, savingAmount);
+                    System.out.print("Enter saving note: ");
+                    String savingNote = sc.nextLine();
+
+                    service.addSavings(user, savingAmount, date, savingNote);
                     break;
 
                 case 4:
@@ -73,9 +77,12 @@ public class Main {
                     double useAmount = sc.nextDouble();
                     sc.nextLine();
 
+                    System.out.print("Enter income source: ");
+                    String useNote = sc.nextLine();
+
                     System.out.print("Enter passkey to continue: ");
                     pass_key = sc.nextLine();
-                    service.useSavings(user, useAmount, pass_key);
+                    service.useSavings(user, date, useAmount, useNote, pass_key);
                     break;
                 case 5:
                     service.showTranscript(user);
@@ -101,7 +108,7 @@ public class Main {
                     break;
 
                 case 8:
-                    service.showSavingList(user);
+                    service.showWishList(user);
                     break;
 
                 case 9:

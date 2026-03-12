@@ -2,19 +2,19 @@ package models.transactions;
 
 import java.time.LocalDate;
 
-public class ExpenseRecord extends Record {
-
-    public ExpenseRecord(LocalDate date, double amount, String note) {
+public class UseSavingRecord extends Record {
+    public UseSavingRecord(LocalDate date, double amount, String note) {
         super(date, amount, note);
     }
 
     @Override
     public TransactionType getType() {
-        return TransactionType.EXPENSE;
+        return TransactionType.USESAVING;
     }
+
     @Override
     public String format() {
         // TODO Auto-generated method stub
-        return "Income  | +$" + getAmount() + " | " + getNote() + " | " + getDate();
+        return "Saving  | -$" + getAmount() + " | " + getNote() + " | " + getDate();
     }
 }
