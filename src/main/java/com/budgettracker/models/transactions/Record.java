@@ -23,7 +23,6 @@ public abstract class Record {
 
     //Getters
     public abstract TransactionType getType();
-
     public abstract String format();
 
     public String getNote() {

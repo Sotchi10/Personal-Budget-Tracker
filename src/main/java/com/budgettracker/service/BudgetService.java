@@ -159,9 +159,9 @@ public class BudgetService {
     }
 
     // Transcript
-    public void showTranscript(User user) {
+    public void showTransaction(User user) {
         Account account = user.getAccount();
-        System.out.println("================== Transcript ==================");
+        System.out.println("================== Transaction ==================");
         if (account.getRecords().isEmpty()) {
             System.out.println("No records yet");
         } else {

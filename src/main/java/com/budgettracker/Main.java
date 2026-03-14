@@ -8,8 +8,8 @@ import com.budgettracker.models.user.*;
 
 public class Main {
     public static void main(String[] args) {
-        //Declarations
-        
+        // Declarations
+
         String pass_key;
         boolean isZero;
         Scanner sc = new Scanner(System.in);
@@ -18,10 +18,10 @@ public class Main {
         boolean running = true;
 
         while (running) {
-            //Get current date
+            // Get current date
             LocalDate date = LocalDate.now();
 
-            //Menu
+            // Menu
             systemMenu();
 
             int choice = sc.nextInt();
@@ -79,7 +79,7 @@ public class Main {
                     double useAmount = sc.nextDouble();
                     sc.nextLine();
 
-                    System.out.print("Enter income source: ");
+                    System.out.print("Enter saving usage note: ");
                     String useNote = sc.nextLine();
 
                     System.out.print("Enter passkey to continue: ");
@@ -87,7 +87,7 @@ public class Main {
                     service.useSavings(user, date, useAmount, useNote, pass_key);
                     break;
                 case 5:
-                    service.showTranscript(user);
+                    service.showTransaction(user);
                     break;
 
                 case 6:
@@ -123,22 +123,22 @@ public class Main {
         sc.close();
     }
 
-    //System Menu
+    // System Menu
     private static void systemMenu() {
-        System.out.println("\n===== BUDGET MENU =====");
-        System.out.println("1. Add Income");
-        System.out.println("2. Add Expense");
-        System.out.println("3. Add Saving");
-        System.out.println("4. Use Saving");
-        System.out.println("5. Show Transcript");
-        System.out.println("6. Set Budget Limit");
-        System.out.println("7. Add Wish Item");
-        System.out.println("8. Show Wish List");
+        System.out.println("\n===== PERSONAL BUDGET TRACKER =====");
+        System.out.println("1. Log Income");
+        System.out.println("2. Log Expense");
+        System.out.println("3. Add to Savings");
+        System.out.println("4. Use Savings");
+        System.out.println("5. View Spending History");
+        System.out.println("6. Set Spending Limit");
+        System.out.println("7. Create Savings Goal");
+        System.out.println("8. View Savings Goals");
         System.out.println("9. Exit");
-        System.out.print("Choose option: ");
+        System.out.print("Choose an option: ");
     }
 
-    //Create user input
+    // Create user input
     private static User createUser(Scanner sc) {
         System.out.println("===== CREATE USER =====");
         String name;

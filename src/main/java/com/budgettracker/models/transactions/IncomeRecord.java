@@ -15,7 +15,7 @@ public class IncomeRecord extends Record {
     @Override
     public String format() {
         // TODO Auto-generated method stub
-        return "Expense  | +$" + getAmount() + " | " + getNote() + " | " + getDate();
+        return "Income  | +$" + getAmount() + " | " + getNote() + " | " + getDate();
     }
 
 }
