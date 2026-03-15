@@ -3,7 +3,11 @@ package com.budgettracker;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-import com.budgettracker.service.BudgetService;
+import com.budgettracker.service.BalanceService;
+import com.budgettracker.service.SavingService;
+import com.budgettracker.service.BudgetLimitService;
+import com.budgettracker.service.WishlistService;
+import com.budgettracker.service.TransactionService;
 import com.budgettracker.models.user.*;
 
 public class Main {
@@ -14,7 +18,11 @@ public class Main {
         boolean isZero;
         Scanner sc = new Scanner(System.in);
         User user = createUser(sc);
-        BudgetService service = new BudgetService();
+        TransactionService transactionService = new TransactionService();
+        SavingService savingService = new SavingService();
+        BalanceService balanceService = new BalanceService();
+        BudgetLimitService budgetLimitService = new BudgetLimitService();
+        WishlistService wishlistService = new WishlistService();
         boolean running = true;
 
         while (running) {
@@ -37,11 +45,11 @@ public class Main {
                     System.out.print("Enter income source: ");
                     String incomeNote = sc.nextLine();
 
-                    service.addIncome(user, incomeAmount, date, incomeNote);
+                    transactionService.addIncome(user, incomeAmount, date, incomeNote);
                     break;
 
                 case 2:
-                    isZero = service.checkBalance(user);
+                    isZero = balanceService.checkBalance(user);
                     if (isZero)
                         break;
 
@@ -56,7 +64,7 @@ public class Main {
                     System.out.print("Enter passkey to continue: ");
                     pass_key = sc.nextLine();
 
-                    service.addExpense(user, expenseAmount, date, expenseItem, pass_key);
+                    transactionService.addExpense(user, expenseAmount, date, expenseItem, pass_key);
                     break;
 
                 case 3:
@@ -67,11 +75,11 @@ public class Main {
                     System.out.print("Enter saving note: ");
                     String savingNote = sc.nextLine();
 
-                    service.addSavings(user, savingAmount, date, savingNote);
+                    savingService.addSavings(user, savingAmount, date, savingNote);
                     break;
 
                 case 4:
-                    isZero = service.checkSavings(user);
+                    isZero = savingService.checkSavings(user);
                     if (isZero)
                         break;
 
@@ -84,10 +92,10 @@ public class Main {
 
                     System.out.print("Enter passkey to continue: ");
                     pass_key = sc.nextLine();
-                    service.useSavings(user, date, useAmount, useNote, pass_key);
+                    savingService.useSavings(user, date, useAmount, useNote, pass_key);
                     break;
                 case 5:
-                    service.showTransaction(user);
+                    transactionService.showTransaction(user);
                     break;
 
                 case 6:
@@ -95,7 +103,7 @@ public class Main {
                     double limit = sc.nextDouble();
                     sc.nextLine();
 
-                    service.limitBudget(user, limit);
+                    budgetLimitService.limitBudget(user, limit);
                     break;
 
                 case 7:
@@ -106,11 +114,11 @@ public class Main {
                     double target = sc.nextDouble();
                     sc.nextLine();
 
-                    service.addWishList(user, item, target);
+                    wishlistService.addWishList(user, item, target);
                     break;
 
                 case 8:
-                    service.showWishList(user);
+                    wishlistService.showWishList(user);
                     break;
 
                 case 9:
