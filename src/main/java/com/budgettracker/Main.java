@@ -3,12 +3,13 @@ package com.budgettracker;
 import java.time.LocalDate;
 import java.util.Scanner;
 
+import com.budgettracker.models.transactions.expense.ExpenseCategory;
+import com.budgettracker.models.user.User;
 import com.budgettracker.service.BalanceService;
-import com.budgettracker.service.SavingService;
 import com.budgettracker.service.BudgetLimitService;
-import com.budgettracker.service.WishlistService;
+import com.budgettracker.service.SavingService;
 import com.budgettracker.service.TransactionService;
-import com.budgettracker.models.user.*;
+import com.budgettracker.service.WishlistService;
 
 public class Main {
     public static void main(String[] args) {
@@ -60,11 +61,26 @@ public class Main {
                     double expenseAmount = sc.nextDouble();
                     sc.nextLine();
 
+                    ExpenseCategory expenseCategory = null;
+                    while (expenseCategory == null) {
+                        System.out.print("Enter Category " + java.util.Arrays.toString(ExpenseCategory.values()) + " : ");
+                        String categoryInput = sc.nextLine().trim();
+                        if (categoryInput.isEmpty()) {
+                            System.out.println("Category cannot be empty");
+                            continue;
+                        }
+                        try {
+                            expenseCategory = ExpenseCategory.valueOf(categoryInput.toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Invalid category!! Please enter a valid category from the list");
+                        }
+                    }
+
                     // modify passkey
                     System.out.print("Enter passkey to continue: ");
                     pass_key = sc.nextLine();
 
-                    transactionService.addExpense(user, expenseAmount, date, expenseItem, pass_key);
+                    transactionService.addExpense(user, expenseAmount, date, expenseCategory, expenseItem, pass_key);
                     break;
 
                 case 3:

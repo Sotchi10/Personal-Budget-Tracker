@@ -1,12 +1,14 @@
 package com.budgettracker.service;
 
-import com.budgettracker.models.user.User;
-import com.budgettracker.models.transactions.Record;
-import com.budgettracker.models.transactions.*;
-import com.budgettracker.models.account.Account;
-import com.budgettracker.auth.*;
-
 import java.time.LocalDate;
+
+import com.budgettracker.auth.AccountAuth;
+import com.budgettracker.models.account.Account;
+import com.budgettracker.models.transactions.IncomeRecord;
+import com.budgettracker.models.transactions.Record;
+import com.budgettracker.models.transactions.expense.ExpenseCategory;
+import com.budgettracker.models.transactions.expense.ExpenseRecord;
+import com.budgettracker.models.user.User;
 
 public class TransactionService {
 
@@ -25,7 +27,7 @@ public class TransactionService {
     }
 
     // Expense
-    public void addExpense(User user, double amount, LocalDate date, String note, String passkey) {
+    public void addExpense(User user, double amount, LocalDate date, ExpenseCategory category, String note, String passkey) {
 
         Account account = user.getAccount();
         if (amount <= 0) {
@@ -38,6 +40,10 @@ public class TransactionService {
         }
         if (note.isBlank()) {
             System.out.println("Note cannot be empty");
+            return;
+        }
+        if (category == null) {
+            System.out.println("Category cannot be empty");
             return;
         }
 
@@ -53,7 +59,7 @@ public class TransactionService {
         }
 
         account.withdraw(amount);
-        Record record = new ExpenseRecord(date, amount, note);
+        Record record = new ExpenseRecord(date, amount, category, note);
         account.addRecord(record);
         System.out.println("\n--You spent: $" + amount + " on " + note + "--");
     }
