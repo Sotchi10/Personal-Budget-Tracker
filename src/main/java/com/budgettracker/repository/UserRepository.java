@@ -3,7 +3,6 @@ package com.budgettracker.repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Scanner;
 
 import com.budgettracker.config.DatabaseConnection;
