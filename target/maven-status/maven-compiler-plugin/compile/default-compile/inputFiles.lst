@@ -1,37 +1,21 @@
-<<<<<<< HEAD
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\auth\AccountAuth.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\Main.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\account\Account.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\transactions\AddSavingRecord.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\transactions\ExpenseRecord.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\transactions\IncomeRecord.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\transactions\Record.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\transactions\TransactionType.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\transactions\UseSavingRecord.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\user\User.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\wishlists\WishItems.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\service\BalanceService.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\service\BudgetLimitService.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\service\BudgetService.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\service\SavingService.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\service\TransactionService.java
-C:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\service\WishlistService.java
-=======
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\auth\AccountAuth.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\Main.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\models\account\Account.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\models\transactions\AddSavingRecord.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\models\transactions\ExpenseRecord.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\models\transactions\IncomeRecord.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\models\transactions\Record.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\models\transactions\TransactionType.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\models\transactions\UseSavingRecord.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\models\user\User.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\models\wishlists\WishItems.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\service\BalanceService.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\service\BudgetLimitService.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\service\BudgetService.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\service\SavingService.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\service\TransactionService.java
-D:\Budget_Tracker\Personal-Budget-Tracker\src\main\java\com\budgettracker\service\WishlistService.java
->>>>>>> c5706e1818a6065eb8a0792a5d07fab2ae5cd4f6
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\auth\AccountAuth.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\config\DatabaseConnection.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\Main.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\account\Account.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\transactions\AddSavingRecord.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\transactions\expense\ExpenseCategory.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\transactions\expense\ExpenseRecord.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\transactions\IncomeRecord.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\transactions\Record.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\transactions\TransactionType.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\transactions\UseSavingRecord.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\user\User.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\models\wishlists\WishItems.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\repository\AccountRepository.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\repository\RecordRepository.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\repository\UserRepository.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\service\BalanceService.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\service\BudgetLimitService.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\service\SavingService.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\service\TransactionService.java
+c:\Users\U-ser\OneDrive\My Projects\Personal-Budget-Tracker-OOP\src\main\java\com\budgettracker\service\WishlistService.java

@@ -18,4 +18,9 @@ public class BalanceService {
         Account account = user.getAccount();
         return account.getBalance();
     }
+
+    public void showAccountInfo(User user) {
+        Account account = user.getAccount();
+        account.accountInfo();
+    }
 }

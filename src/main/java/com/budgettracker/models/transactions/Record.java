@@ -3,7 +3,7 @@ import java.time.LocalDate;
 
 
 public abstract class Record {
-    private String record_id;
+    private int record_id;
     private String note;
     private double amount;
     private LocalDate date; 
@@ -33,12 +33,17 @@ public abstract class Record {
         return date;
     }
 
-    public String getRecord_id() {
+    public int getRecordId() {
         return record_id;
     }
 
     public double getAmount() {
         return amount;
+    }
+
+    //Setters
+    public void setRecordId(int record_id) {
+        this.record_id = record_id;
     }
 
 }

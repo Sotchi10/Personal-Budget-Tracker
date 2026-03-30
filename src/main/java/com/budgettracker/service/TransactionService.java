@@ -10,6 +10,8 @@ import com.budgettracker.models.transactions.expense.ExpenseCategory;
 import com.budgettracker.models.transactions.expense.ExpenseRecord;
 import com.budgettracker.models.user.User;
 
+import com.budgettracker.repository.*;
+
 public class TransactionService {
 
     // Income
@@ -21,14 +23,17 @@ public class TransactionService {
         }
 
         account.deposit(amount);
+        AccountRepository accRepo = new AccountRepository();
+        accRepo.updateBalance(user, user.getAccount().getBalance());
         Record record = new IncomeRecord(date, amount, note);
         account.addRecord(record);
+        RecordRepository repo = new RecordRepository();
+        repo.saveRecord(record, account.getAccountId());
         System.out.println("\n--You gained: $" + amount + " from " + note + "--");
     }
 
     // Expense
     public void addExpense(User user, double amount, LocalDate date, ExpenseCategory category, String note, String passkey) {
-
         Account account = user.getAccount();
         if (amount <= 0) {
             System.out.println("Amount must be positive");
@@ -59,8 +64,12 @@ public class TransactionService {
         }
 
         account.withdraw(amount);
+        AccountRepository accRepo = new AccountRepository();
+        accRepo.updateBalance(user, user.getAccount().getBalance());
         Record record = new ExpenseRecord(date, amount, category, note);
         account.addRecord(record);
+        RecordRepository repo = new RecordRepository();
+        repo.saveRecord(record, account.getAccountId());
         System.out.println("\n--You spent: $" + amount + " on " + note + "--");
     }
 

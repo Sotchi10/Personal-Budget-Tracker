@@ -9,7 +9,7 @@ public class UseSavingRecord extends Record {
 
     @Override
     public TransactionType getType() {
-        return TransactionType.USESAVING;
+        return TransactionType.USE_SAVING;
     }
 
     @Override

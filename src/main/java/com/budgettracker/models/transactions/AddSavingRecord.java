@@ -10,7 +10,7 @@ public class AddSavingRecord extends Record {
 
     @Override
     public TransactionType getType() {
-        return TransactionType.ADDSAVING;
+        return TransactionType.ADD_SAVING;
     }
     @Override
     public String format() {

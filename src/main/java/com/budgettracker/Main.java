@@ -11,14 +11,22 @@ import com.budgettracker.service.SavingService;
 import com.budgettracker.service.TransactionService;
 import com.budgettracker.service.WishlistService;
 
+import com.budgettracker.repository.*;
+
 public class Main {
     public static void main(String[] args) {
         // Declarations
-
         String pass_key;
         boolean isZero;
         Scanner sc = new Scanner(System.in);
-        User user = createUser(sc);
+        //Create Users
+        UserRepository userRepo = new UserRepository();
+        User user = userRepo.createUser(sc);
+        userRepo.saveUser(user);
+        AccountRepository accRepo = new AccountRepository();
+        accRepo.createAccount(user);
+        
+        //Services
         TransactionService transactionService = new TransactionService();
         SavingService savingService = new SavingService();
         BalanceService balanceService = new BalanceService();
@@ -37,8 +45,10 @@ public class Main {
             sc.nextLine();
 
             switch (choice) {
-
                 case 1:
+                    balanceService.showAccountInfo(user);
+                    break;
+                case 2:
                     System.out.print("Enter income amount: ");
                     double incomeAmount = sc.nextDouble();
                     sc.nextLine();
@@ -49,7 +59,7 @@ public class Main {
                     transactionService.addIncome(user, incomeAmount, date, incomeNote);
                     break;
 
-                case 2:
+                case 3:
                     isZero = balanceService.checkBalance(user);
                     if (isZero)
                         break;
@@ -83,7 +93,7 @@ public class Main {
                     transactionService.addExpense(user, expenseAmount, date, expenseCategory, expenseItem, pass_key);
                     break;
 
-                case 3:
+                case 4:
                     System.out.print("Enter saving amount: ");
                     double savingAmount = sc.nextDouble();
                     sc.nextLine();
@@ -94,7 +104,7 @@ public class Main {
                     savingService.addSavings(user, savingAmount, date, savingNote);
                     break;
 
-                case 4:
+                case 5:
                     isZero = savingService.checkSavings(user);
                     if (isZero)
                         break;
@@ -110,11 +120,11 @@ public class Main {
                     pass_key = sc.nextLine();
                     savingService.useSavings(user, date, useAmount, useNote, pass_key);
                     break;
-                case 5:
+                case 6:
                     transactionService.showTransaction(user);
                     break;
 
-                case 6:
+                case 7:
                     System.out.print("Enter budget limit: ");
                     double limit = sc.nextDouble();
                     sc.nextLine();
@@ -122,7 +132,7 @@ public class Main {
                     budgetLimitService.limitBudget(user, limit);
                     break;
 
-                case 7:
+                case 8:
                     System.out.print("Enter saving item name: ");
                     String item = sc.nextLine();
 
@@ -133,11 +143,11 @@ public class Main {
                     wishlistService.addWishList(user, item, target);
                     break;
 
-                case 8:
+                case 9:
                     wishlistService.showWishList(user);
                     break;
 
-                case 9:
+                case 10:
                     break;
 
                 default:
@@ -150,94 +160,17 @@ public class Main {
     // System Menu
     private static void systemMenu() {
         System.out.println("\n===== PERSONAL BUDGET TRACKER =====");
-        System.out.println("1. Log Income");
-        System.out.println("2. Log Expense");
-        System.out.println("3. Add to Savings");
-        System.out.println("4. Use Savings");
-        System.out.println("5. View Spending History");
-        System.out.println("6. Set Spending Limit");
-        System.out.println("7. Create Savings Goal");
-        System.out.println("8. View Savings Goals");
-        System.out.println("9. Exit");
+        System.out.println("1. Show Account Information");
+        System.out.println("2. Log Income");
+        System.out.println("3. Log Expense");
+        System.out.println("4. Add to Savings");
+        System.out.println("5. Use Savings");
+        System.out.println("6. View Spending History");
+        System.out.println("7. Set Spending Limit");
+        System.out.println("8. Create Savings Goal");
+        System.out.println("9. View Savings Goals");
+        System.out.println("10. Exit");
         System.out.print("Choose an option: ");
     }
-
-    // Create user input
-    private static User createUser(Scanner sc) {
-        System.out.println("===== CREATE USER =====");
-        String name;
-        int age;
-        String email;
-        String password;
-        String passkey;
-
-        // NAME
-        while (true) {
-            try {
-                System.out.print("Enter name: ");
-                name = sc.nextLine();
-                if (name == null || name.isBlank())
-                    throw new IllegalArgumentException("Name cannot be empty.");
-                break;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        // AGE
-        while (true) {
-            try {
-                System.out.print("Enter age: ");
-                age = Integer.parseInt(sc.nextLine());
-                if (age < 18)
-                    throw new IllegalArgumentException("Age must be at least 18.");
-                break;
-            } catch (NumberFormatException e) {
-                System.out.println("Age must be a number.");
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        // EMAIL
-        while (true) {
-            try {
-                System.out.print("Enter email: ");
-                email = sc.nextLine();
-                User.validateEmail(email);
-                break;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        // PASSWORD
-        while (true) {
-            try {
-                System.out.print("Enter password: ");
-                password = sc.nextLine();
-                User.validatePassword(password);
-                break;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        // PASSKEY
-        while (true) {
-            try {
-                System.out.print("Create passkey (4 digits): ");
-                passkey = sc.nextLine();
-                if (!passkey.matches("\\d{4}"))
-                    throw new IllegalArgumentException("Passkey must be exactly 4 digits.");
-                break;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        System.out.println("\n===== Account is successfully created =====\n");
-        return new User(name, age, email, password, passkey);
-    }
-
+    
 }

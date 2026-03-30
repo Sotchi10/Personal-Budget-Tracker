@@ -7,6 +7,7 @@ import com.budgettracker.models.account.*;
 import com.budgettracker.models.wishlists.*;
 
 public class User {
+    private int userID;
     private String name;
     private int age;
     private String email;
@@ -57,6 +58,9 @@ public class User {
     public String getPassword() {
         return password;
     }
+    public int getUserId() {
+        return userID;
+    }
 
 
     // Setters
@@ -71,6 +75,14 @@ public class User {
             throw new IllegalArgumentException("age restriction");
         this.age = age;
     }
+
+    public void setUserId(int userID) {
+        this.userID = userID;
+    }
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+    
 
     public static void validateEmail(String email) {
         if (email == null || email.isBlank())
@@ -120,5 +132,5 @@ public class User {
         return Collections.unmodifiableList(wishLists);
     }
 
-
+    
 }

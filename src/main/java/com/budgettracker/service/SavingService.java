@@ -2,6 +2,8 @@ package com.budgettracker.service;
 
 import com.budgettracker.models.transactions.Record;
 import com.budgettracker.models.user.User;
+import com.budgettracker.repository.AccountRepository;
+import com.budgettracker.repository.RecordRepository;
 import com.budgettracker.models.transactions.*;
 import com.budgettracker.models.account.Account;
 import com.budgettracker.auth.*;
@@ -22,8 +24,14 @@ public class SavingService {
         }
 
         account.addSaving(saving);
+        AccountRepository accRepo = new AccountRepository();
+        accRepo.updateSaving(user, user.getAccount().getSavingAmount());
+        accRepo.updateBalance(user, user.getAccount().getBalance());
+
         Record record = new AddSavingRecord(date, saving, note);
         account.addRecord(record);
+        RecordRepository recordRepo = new RecordRepository();
+        recordRepo.saveRecord(record, account.getAccountId());
         System.out.println("Deposit successful: +$" + saving);
     }
 
@@ -55,8 +63,14 @@ public class SavingService {
         }
 
         account.withdrawSaving(saving);
+        AccountRepository accRepo = new AccountRepository();
+        accRepo.updateSaving(user, user.getAccount().getSavingAmount());
+        accRepo.updateBalance(user, user.getAccount().getBalance());
+         
         Record record = new UseSavingRecord(date, saving, note);
         account.addRecord(record);
+        RecordRepository recordRepo = new RecordRepository();
+        recordRepo.saveRecord(record, account.getAccountId());
         System.out.println("Withdrawal successful: -$" + saving + " from your savings");
     }
 }
