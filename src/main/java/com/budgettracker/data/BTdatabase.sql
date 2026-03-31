@@ -1,5 +1,5 @@
 Use budget_tracker;
-
+SHOW TABLES;
 CREATE TABLE users(
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
@@ -24,15 +24,15 @@ CREATE TABLE category(
 );
 CREATE TABLE record(
     record_id INT AUTO_INCREMENT PRIMARY KEY,
-    note TEXT,
     account_id INT NOT NULL,
-    amount DECIMAL(10,2),
-    record_date DATE,
     transaction_type ENUM('INCOME','EXPENSE','USE_SAVING','ADD_SAVING'),
+    amount DECIMAL(10,2),
+    note TEXT,
+    record_date DATE,
     
     FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );
-DROP TABLE record;
+
 CREATE TABLE wishlists(
     item_id INT AUTO_INCREMENT PRIMARY KEY,
     account_id INT NOT NULL,
@@ -42,3 +42,13 @@ CREATE TABLE wishlists(
     
     FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );
+
+SELECT * FROM Users;
+SELECT * FROM Accounts;
+SELECT * FROM Record;
+
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE accounts;
+TRUNCATE TABLE users;
+TRUNCATE TABLE record;
+SET FOREIGN_KEY_CHECKS = 1;
