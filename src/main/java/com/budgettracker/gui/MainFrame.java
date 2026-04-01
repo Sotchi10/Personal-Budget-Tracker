@@ -1,4 +1,4 @@
-package com.budgettracker.gui;
+package com.budgettracker.GUI;
 
 import javax.swing.*;
 
