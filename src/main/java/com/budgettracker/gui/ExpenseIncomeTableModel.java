@@ -1,4 +1,4 @@
-package com.budgettracker.GUI;
+package com.budgettracker.gui;
 
 import java.util.ArrayList;
 import java.util.List;

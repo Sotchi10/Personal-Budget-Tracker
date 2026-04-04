@@ -1,4 +1,4 @@
-package com.budgettracker.GUI;
+package com.budgettracker.gui;
 
 import com.budgettracker.config.DatabaseConnection;
 

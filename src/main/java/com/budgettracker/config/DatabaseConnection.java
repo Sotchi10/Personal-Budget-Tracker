@@ -14,12 +14,14 @@ public class DatabaseConnection {
     // private static final String PASSWORD = "@RithzQ7";
 
     // Leng's Account
-    private static final String URL = "jdbc:mysql://localhost:3306/budget_tracker";
-    private static final String USER = "root";
-    private static final String PASSWORD = "sinhsinh@99";
+    // private static final String URL = "jdbc:mysql://localhost:3306/budget_tracker";
+    // private static final String USER = "root";
+    // private static final String PASSWORD = "sinhsinh@99";
 
     // Ching's Account
-
+    private static final String URL = "jdbc:mysql://localhost:3306/budget_tracker";
+    private static final String USER = "root";
+    private static final String PASSWORD = "Chea/2006@$kcc";
 
     public static Connection getConnection() {
         try {

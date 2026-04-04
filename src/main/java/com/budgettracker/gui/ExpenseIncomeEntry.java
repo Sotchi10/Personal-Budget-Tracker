@@ -1,4 +1,4 @@
-package com.budgettracker.GUI;
+package com.budgettracker.gui;
 
 public class ExpenseIncomeEntry {
     private final String date;
