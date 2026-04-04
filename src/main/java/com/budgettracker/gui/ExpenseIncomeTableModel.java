@@ -1,4 +1,4 @@
-package com.budgettracker.gui;
+package com.budgettracker.GUI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 public class ExpenseIncomeTableModel extends AbstractTableModel {
-    private static final String[] COLUMN_NAMES = {"Date", "Description", "Amount", "Type"};
+    private static final String[] COLUMN_NAMES = {"Date", "Description", "Amount", "Type", "Category"};
 
     private final List<ExpenseIncomeEntry> entries;
 
@@ -46,6 +46,8 @@ public class ExpenseIncomeTableModel extends AbstractTableModel {
                 return entry.getAmount();
             case 3:
                 return entry.getType();
+            case 4:
+                return entry.getCategory();
             default:
                 return null;
         }

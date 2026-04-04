@@ -1,4 +1,4 @@
-package com.budgettracker.gui;
+package com.budgettracker.GUI;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -105,7 +105,11 @@ public class SignupGUI extends JFrame {
 
         } catch(SQLException ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error creating account! Email may already exist.");
+            if ("23000".equals(ex.getSQLState())) {
+                JOptionPane.showMessageDialog(this, "Could not create account. That email may already exist.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Database error while creating account: " + ex.getMessage());
+            }
         }
     }
 }

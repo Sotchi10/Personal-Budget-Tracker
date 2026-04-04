@@ -1,5 +1,5 @@
--- Use budget_tracker;
-USE budget_tracker_system
+Use budget_tracker;
+-- USE budget_tracker_system
 
 CREATE TABLE users(
     user_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -7,6 +7,7 @@ CREATE TABLE users(
     age INT,
     email VARCHAR(50) UNIQUE,
     user_password VARCHAR(255),
+    passkey VARCHAR(4) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
