@@ -7,7 +7,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,12 +23,10 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import com.budgettracker.config.DatabaseConnection;
 import com.budgettracker.models.transactions.expense.ExpenseCategory;
 
 public class MainFrame extends JFrame {
-    private static final String URL = "jdbc:mysql://localhost:8889/budget_tracker";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root";
     private static final String LOGIN_CARD = "login";
     private static final String SIGNUP_CARD = "signup";
     private static final String DASHBOARD_CARD = "dashboard";
@@ -304,7 +301,7 @@ public class MainFrame extends JFrame {
             return;
         }
 
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
             String sql = "SELECT passkey FROM users WHERE user_name = ? AND user_password = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, user);
@@ -339,20 +336,47 @@ public class MainFrame extends JFrame {
             return;
         }
 
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            String sql = "INSERT INTO users(user_name, user_password, email, passkey) VALUES(?,?,?,?)";
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false);
+
+            int userId = createUserRecord(conn, name, email, password, passkey);
+            createAccountRecord(conn, userId);
+
+            conn.commit();
+            JOptionPane.showMessageDialog(this, "Account created! Please login.");
+            showLogin();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, buildSignupErrorMessage(ex));
+        }
+    }
+
+    private int createUserRecord(Connection conn, String name, String email, String password, String passkey) throws SQLException {
+        String sql = "INSERT INTO users(user_name, user_password, email, passkey) VALUES(?,?,?,?)";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, name);
             stmt.setString(2, password);
             stmt.setString(3, email);
             stmt.setString(4, passkey);
             stmt.executeUpdate();
 
-            JOptionPane.showMessageDialog(this, "Account created! Please login.");
-            showLogin();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, buildSignupErrorMessage(ex));
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+
+        throw new SQLException("Failed to create user record.");
+    }
+
+    private void createAccountRecord(Connection conn, int userId) throws SQLException {
+        String sql = "INSERT INTO accounts(user_id) VALUES(?)";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.executeUpdate();
         }
     }
 

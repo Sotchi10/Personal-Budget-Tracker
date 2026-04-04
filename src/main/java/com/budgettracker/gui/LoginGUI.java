@@ -1,5 +1,7 @@
 package com.budgettracker.GUI;
 
+import com.budgettracker.config.DatabaseConnection;
+
 import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
@@ -9,10 +11,6 @@ public class LoginGUI extends JFrame {
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton btnLogin, btnSignup;
-
-    private static final String URL = "jdbc:mysql://localhost:8889/budget_tracker";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root";
 
     public LoginGUI() {
         setTitle("Budget Tracker Login");
@@ -59,7 +57,7 @@ public class LoginGUI extends JFrame {
         String user = usernameField.getText();
         String pass = new String(passwordField.getPassword());
 
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
             String sql = "SELECT * FROM users WHERE user_name = ? AND user_password = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, user);

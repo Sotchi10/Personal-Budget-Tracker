@@ -4,8 +4,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
@@ -15,16 +15,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import com.budgettracker.config.DatabaseConnection;
+
 public class SignupGUI extends JFrame {
 
     private JTextField nameField, emailField, passkeyField;
     private JPasswordField passwordField;
     private JButton btnCreate;
     private LoginGUI loginGUI;
-
-    private static final String URL = "jdbc:mysql://localhost:8889/budget_tracker";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root";
 
     public SignupGUI(LoginGUI loginGUI) {
         this.loginGUI = loginGUI;
@@ -91,15 +89,33 @@ public class SignupGUI extends JFrame {
             return;
         }
 
-        try(Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            String sql = "INSERT INTO users(user_name, user_password, email, passkey) VALUES(?,?,?,?)";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, name);
-            stmt.setString(2, pass); // later hash passwords
-            stmt.setString(3, email);
-            stmt.setString(4, passkey);
+        try(Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false);
 
-            stmt.executeUpdate();
+            String sql = "INSERT INTO users(user_name, user_password, email, passkey) VALUES(?,?,?,?)";
+            int userId;
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                stmt.setString(1, name);
+                stmt.setString(2, pass); // later hash passwords
+                stmt.setString(3, email);
+                stmt.setString(4, passkey);
+                stmt.executeUpdate();
+
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (!rs.next()) {
+                        throw new SQLException("Failed to create user record.");
+                    }
+                    userId = rs.getInt(1);
+                }
+            }
+
+            try (PreparedStatement stmt = conn.prepareStatement("INSERT INTO accounts(user_id) VALUES(?)")) {
+                stmt.setInt(1, userId);
+                stmt.executeUpdate();
+            }
+
+            conn.commit();
             JOptionPane.showMessageDialog(this, "Account created! Please login.");
             dispose(); // close signup window
 
