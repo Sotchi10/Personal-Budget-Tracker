@@ -22,6 +22,7 @@ public class SignupGUI extends JFrame {
     private JTextField nameField, emailField, passkeyField;
     private JPasswordField passwordField;
     private JButton btnCreate;
+    private JButton btnBackToLogin;
     private LoginGUI loginGUI;
 
     public SignupGUI(LoginGUI loginGUI) {
@@ -69,7 +70,13 @@ public class SignupGUI extends JFrame {
         btnCreate = new JButton("Create Account");
         add(btnCreate, gbc);
 
+        // Back to login button
+        gbc.gridx=0; gbc.gridy=4;
+        btnBackToLogin = new JButton("Back to Login");
+        add(btnBackToLogin, gbc);
+
         btnCreate.addActionListener(e -> signup());
+        btnBackToLogin.addActionListener(e -> returnToLogin());
 
         setVisible(true);
     }
@@ -78,13 +85,13 @@ public class SignupGUI extends JFrame {
         String name = nameField.getText();
         String pass = new String(passwordField.getPassword());
         String email = emailField.getText();
-        String pass_key = passkeyField.getText();
+        String passkey = passkeyField.getText();
 
-        if(name.isEmpty() || pass.isEmpty() || email.isEmpty() || pass_key.isEmpty()) {
+        if(name.isEmpty() || pass.isEmpty() || email.isEmpty() || passkey.isEmpty()) {
             JOptionPane.showMessageDialog(this, "All fields are required!");
             return;
         }
-        if(pass_key.length() != 4 || !pass_key.matches("\\d{4}")) {
+        if(passkey.length() != 4 || !passkey.matches("\\d{4}")) {
             JOptionPane.showMessageDialog(this, "Passkey must be 4 digits!");
             return;
         }
@@ -99,7 +106,7 @@ public class SignupGUI extends JFrame {
                 stmt.setString(1, name);
                 stmt.setString(2, pass); // later hash passwords
                 stmt.setString(3, email);
-                stmt.setString(4, pass_key);
+                stmt.setString(4, passkey);
                 stmt.executeUpdate();
 
                 try (ResultSet rs = stmt.getGeneratedKeys()) {
@@ -115,6 +122,7 @@ public class SignupGUI extends JFrame {
                 stmt.executeUpdate();
             }
 
+
             conn.commit();
             JOptionPane.showMessageDialog(this, "Account created! Please login.");
             dispose(); // close signup window
@@ -127,5 +135,13 @@ public class SignupGUI extends JFrame {
                 JOptionPane.showMessageDialog(this, "Database error while creating account: " + ex.getMessage());
             }
         }
+    }
+
+    private void returnToLogin() {
+        if (loginGUI != null) {
+            loginGUI.setVisible(true);
+            loginGUI.toFront();
+        }
+        dispose();
     }
 }

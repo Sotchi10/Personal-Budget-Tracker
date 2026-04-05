@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import com.budgettracker.config.DatabaseConnection;
+import com.budgettracker.models.account.Account;
 import com.budgettracker.models.user.User;
 
 public class AccountRepository {
@@ -34,6 +35,30 @@ public class AccountRepository {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public Account loadAccount(User user) {
+        String sql = "SELECT account_id, balance, saving_balance, limit_balance FROM accounts WHERE user_id = ?";
+        Account account = user.getAccount();
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, user.getUserId());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    account.setAccountId(rs.getInt("account_id"));
+                    account.setBalance(rs.getDouble("balance"));
+                    account.setSavingAmount(rs.getDouble("saving_balance"));
+                    account.setLimit(rs.getDouble("limit_balance"));
+                    account.setUser(user);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return account;
     }
 
     public void updateBalance(User user, double balance) {

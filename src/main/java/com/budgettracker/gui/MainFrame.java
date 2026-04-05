@@ -1,15 +1,13 @@
 package com.budgettracker.gui;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -17,30 +15,25 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import com.budgettracker.config.DatabaseConnection;
+import com.budgettracker.models.account.Account;
+import com.budgettracker.models.transactions.Record;
+import com.budgettracker.models.transactions.TransactionType;
 import com.budgettracker.models.transactions.expense.ExpenseCategory;
+import com.budgettracker.models.transactions.expense.ExpenseRecord;
+import com.budgettracker.models.user.User;
+import com.budgettracker.repository.AccountRepository;
+import com.budgettracker.repository.RecordRepository;
+import com.budgettracker.service.BalanceService;
+import com.budgettracker.service.BudgetLimitService;
+import com.budgettracker.service.SavingService;
+import com.budgettracker.service.TransactionService;
 
 public class MainFrame extends JFrame {
-    private static final String LOGIN_CARD = "login";
-    private static final String SIGNUP_CARD = "signup";
-    private static final String DASHBOARD_CARD = "dashboard";
-
-    private CardLayout rootLayout;
-    private JPanel rootPanel;
-
-    private JTextField loginUsernameField;
-    private JPasswordField loginPasswordField;
-    private JTextField signupNameField;
-    private JTextField signupEmailField;
-    private JPasswordField signupPasswordField;
-    private JTextField signupPasskeyField;
-
     private JPanel topBarPanel;
     private JLabel categoryLabel;
     private JComboBox<ExpenseCategory> categoryComboBox;
@@ -59,22 +52,34 @@ public class MainFrame extends JFrame {
     private ExpenseIncomeTableModel tableModel;
     private JTable table;
     private String accountPasskey;
-    private double baseLimitBalance;
+    private User currentUser;
 
-    public MainFrame() {
-        this.accountPasskey = "";
+    private final TransactionService transactionService;
+    private final SavingService savingService;
+    private final BalanceService balanceService;
+    private final BudgetLimitService budgetLimitService;
+    private final AccountRepository accountRepository;
+    private final RecordRepository recordRepository;
+
+    public MainFrame(User user) {
+        this.accountPasskey = user == null ? "" : user.getPasskey();
+        this.currentUser = user;
+        this.transactionService = new TransactionService();
+        this.savingService = new SavingService();
+        this.balanceService = new BalanceService();
+        this.budgetLimitService = new BudgetLimitService();
+        this.accountRepository = new AccountRepository();
+        this.recordRepository = new RecordRepository();
         setTitle("Personal Budget Tracker");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(980, 640);
         setLocationRelativeTo(null);
-        rootLayout = new CardLayout();
-        rootPanel = new JPanel(rootLayout);
-        rootPanel.add(buildLoginPanel(), LOGIN_CARD);
-        rootPanel.add(buildSignupPanel(), SIGNUP_CARD);
-        rootPanel.add(buildDashboardPanel(), DASHBOARD_CARD);
-        setContentPane(rootPanel);
+        setContentPane(buildDashboardPanel());
 
-        showLogin();
+        if (currentUser != null) {
+            loadUserAccountData(currentUser);
+        }
+
         setVisible(true);
     }
 
@@ -101,6 +106,7 @@ public class MainFrame extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 0;
+
 
         addTopBarField(topBarPanel, gbc, 0, new JLabel("Date"));
         addTopBarField(topBarPanel, gbc, 1, new JLabel("Description"));
@@ -140,7 +146,7 @@ public class MainFrame extends JFrame {
         totalBudgetLabel = new JLabel("Total Budget: $0.00");
         savingBalanceLabel = new JLabel("Saving Balance: $0.00");
         limitBalanceLabel = new JLabel("Limit Balance: $0.00");
-        availableBalanceLabel = new JLabel("Available After Limit: $0.00");
+        availableBalanceLabel = new JLabel("Remaining 'til Limit: $0.00");
 
         summaryPanel.add(totalIncomeLabel);
         summaryPanel.add(totalExpenseLabel);
@@ -183,88 +189,6 @@ public class MainFrame extends JFrame {
         return dashboardPanel;
     }
 
-    private JPanel buildLoginPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        loginUsernameField = new JTextField(18);
-        loginPasswordField = new JPasswordField(18);
-        JButton loginButton = new JButton("Login");
-        JButton signupButton = new JButton("Create Account");
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panel.add(new JLabel("Username"), gbc);
-        gbc.gridx = 1;
-        panel.add(loginUsernameField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        panel.add(new JLabel("Password"), gbc);
-        gbc.gridx = 1;
-        panel.add(loginPasswordField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        panel.add(loginButton, gbc);
-        gbc.gridx = 1;
-        panel.add(signupButton, gbc);
-
-        loginButton.addActionListener(e -> login());
-        signupButton.addActionListener(e -> showSignup());
-        return panel;
-    }
-
-    private JPanel buildSignupPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        signupNameField = new JTextField(18);
-        signupEmailField = new JTextField(18);
-        signupPasswordField = new JPasswordField(18);
-        signupPasskeyField = new JTextField(4);
-        JButton createButton = new JButton("Sign Up");
-        JButton backButton = new JButton("Back to Login");
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panel.add(new JLabel("Name"), gbc);
-        gbc.gridx = 1;
-        panel.add(signupNameField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        panel.add(new JLabel("Email"), gbc);
-        gbc.gridx = 1;
-        panel.add(signupEmailField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        panel.add(new JLabel("Password"), gbc);
-        gbc.gridx = 1;
-        panel.add(signupPasswordField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        panel.add(new JLabel("4-digit Passkey"), gbc);
-        gbc.gridx = 1;
-        panel.add(signupPasskeyField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        panel.add(createButton, gbc);
-        gbc.gridx = 1;
-        panel.add(backButton, gbc);
-
-        createButton.addActionListener(e -> signup());
-        backButton.addActionListener(e -> showLogin());
-        return panel;
-    }
-
     private void addTopBarField(JPanel panel, GridBagConstraints template, int column, java.awt.Component component) {
         GridBagConstraints gbc = (GridBagConstraints) template.clone();
         gbc.gridx = column;
@@ -278,143 +202,26 @@ public class MainFrame extends JFrame {
         panel.add(component, gbc);
     }
 
-    private void showLogin() {
-        clearAuthFields();
-        rootLayout.show(rootPanel, LOGIN_CARD);
-    }
 
-    private void showSignup() {
-        clearAuthFields();
-        rootLayout.show(rootPanel, SIGNUP_CARD);
-    }
-
-    private void showDashboard() {
-        rootLayout.show(rootPanel, DASHBOARD_CARD);
-    }
-
-    private void login() {
-        String user = loginUsernameField.getText().trim();
-        String pass = new String(loginPasswordField.getPassword());
-
-        if (user.isEmpty() || pass.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Username and password are required.");
-            return;
+    private void loadUserAccountData(User user) {
+        Account account = accountRepository.loadAccount(user);
+        List<Record> records = recordRepository.getRecordsByAccountId(account.getAccountId());
+        account.clearRecords();
+        for (Record record : records) {
+            account.addRecord(record);
         }
-
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            String sql = "SELECT passkey FROM users WHERE user_name = ? AND user_password = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, user);
-            stmt.setString(2, pass);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                accountPasskey = rs.getString("passkey");
-                JOptionPane.showMessageDialog(this, "Login Successful!");
-                showDashboard();
-            } else {
-                JOptionPane.showMessageDialog(this, "Login Failed!");
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Database Error!");
-        }
-    }
-
-    private void signup() {
-        String name = signupNameField.getText().trim();
-        String email = signupEmailField.getText().trim();
-        String password = new String(signupPasswordField.getPassword());
-        String passkey = signupPasskeyField.getText().trim();
-
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || passkey.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "All fields are required!");
-            return;
-        }
-        if (!passkey.matches("\\d{4}")) {
-            JOptionPane.showMessageDialog(this, "Passkey must be 4 digits!");
-            return;
-        }
-
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
-
-            int userId = createUserRecord(conn, name, email, password, passkey);
-            createAccountRecord(conn, userId);
-
-            conn.commit();
-            JOptionPane.showMessageDialog(this, "Account created! Please login.");
-            showLogin();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, buildSignupErrorMessage(ex));
-        }
-    }
-
-    private int createUserRecord(Connection conn, String name, String email, String password, String passkey) throws SQLException {
-        String sql = "INSERT INTO users(user_name, user_password, email, passkey) VALUES(?,?,?,?)";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, name);
-            stmt.setString(2, password);
-            stmt.setString(3, email);
-            stmt.setString(4, passkey);
-            stmt.executeUpdate();
-
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-        }
-
-        throw new SQLException("Failed to create user record.");
-    }
-
-    private void createAccountRecord(Connection conn, int userId) throws SQLException {
-        String sql = "INSERT INTO accounts(user_id) VALUES(?)";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, userId);
-            stmt.executeUpdate();
-        }
-    }
-
-    private String buildSignupErrorMessage(SQLException ex) {
-        if ("23000".equals(ex.getSQLState())) {
-            return "Could not create account. That email may already exist.";
-        }
-        return "Database error while creating account: " + ex.getMessage();
+        syncTableFromRecords(records);
+        updateSummary();
     }
 
     private void logout() {
+        currentUser = null;
         accountPasskey = "";
         tableModel.clearEntries();
-        baseLimitBalance = 0;
         limitField.setText("");
         updateSummary();
-        showLogin();
-    }
-
-    private void clearAuthFields() {
-        if (loginUsernameField != null) {
-            loginUsernameField.setText("");
-        }
-        if (loginPasswordField != null) {
-            loginPasswordField.setText("");
-        }
-        if (signupNameField != null) {
-            signupNameField.setText("");
-        }
-        if (signupEmailField != null) {
-            signupEmailField.setText("");
-        }
-        if (signupPasswordField != null) {
-            signupPasswordField.setText("");
-        }
-        if (signupPasskeyField != null) {
-            signupPasskeyField.setText("");
-        }
+        dispose();
+        SwingUtilities.invokeLater(LoginGUI::new);
     }
 
     private void updateCategoryVisibility() {
@@ -425,12 +232,130 @@ public class MainFrame extends JFrame {
         topBarPanel.repaint();
     }
 
+    private LocalDate parseDate(String dateText) {
+        try {
+            return LocalDate.parse(dateText);
+        } catch (DateTimeParseException ex) {
+            JOptionPane.showMessageDialog(this, "Date must be in YYYY-MM-DD format.");
+            return null;
+        }
+    }
+
+    private void appendLatestRecordToTable() {
+        if (currentUser == null) {
+            return;
+        }
+        List<Record> records = currentUser.getAccount().getRecords();
+        if (records.isEmpty()) {
+            return;
+        }
+        Record record = records.get(records.size() - 1);
+        addEntryFromRecord(record);
+    }
+
+    private void syncTableFromRecords(List<Record> records) {
+        tableModel.clearEntries();
+        for (Record record : records) {
+            addEntryFromRecord(record);
+        }
+    }
+
+    private void addEntryFromRecord(Record record) {
+        if (record == null) {
+            return;
+        }
+        String typeLabel = toDisplayType(record.getType());
+        String categoryLabelValue = "-";
+        if (record instanceof ExpenseRecord) {
+            ExpenseRecord expense = (ExpenseRecord) record;
+            categoryLabelValue = expense.getCategory().name();
+        }
+        ExpenseIncomeEntry entry = new ExpenseIncomeEntry(
+                record.getDate().toString(),
+                record.getNote(),
+                record.getAmount(),
+                typeLabel,
+                categoryLabelValue);
+        tableModel.addEntry(entry);
+    }
+
+    private String toDisplayType(TransactionType type) {
+        switch (type) {
+            case EXPENSE:
+                return "Expense";
+            case ADD_SAVING:
+                return "Add Saving";
+            case USE_SAVING:
+                return "Use Saving";
+            case INCOME:
+            default:
+                return "Income";
+        }
+    }
+
+    private Record getRecordForRow(int rowIndex) {
+        if (currentUser == null) {
+            return null;
+        }
+        List<Record> records = currentUser.getAccount().getRecords();
+        if (rowIndex < 0 || rowIndex >= records.size()) {
+            return null;
+        }
+        return records.get(rowIndex);
+    }
+
+    private void reloadRecordsAndBalances() {
+        if (currentUser == null) {
+            return;
+        }
+        Account account = currentUser.getAccount();
+        List<Record> records = recordRepository.getRecordsByAccountId(account.getAccountId());
+        account.clearRecords();
+        for (Record record : records) {
+            account.addRecord(record);
+        }
+
+
+        double balance = 0;
+        double saving = 0;
+        for (Record record : records) {
+            if (record == null) {
+                continue;
+            }
+            switch (record.getType()) {
+                case INCOME:
+                    balance += record.getAmount();
+                    break;
+                case EXPENSE:
+                    balance -= record.getAmount();
+                    break;
+                case ADD_SAVING:
+                    balance -= record.getAmount();
+                    saving += record.getAmount();
+                    break;
+                case USE_SAVING:
+                    balance += record.getAmount();
+                    saving -= record.getAmount();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        account.setBalance(balance);
+        account.setSavingAmount(saving);
+        accountRepository.updateBalance(currentUser, balance);
+        accountRepository.updateSaving(currentUser, saving);
+
+        syncTableFromRecords(records);
+        updateSummary();
+    }
+
     private void addEntry() {
         String date = dateField.getText().trim();
         String description = descriptionField.getText().trim();
         String amountText = amountField.getText().trim();
         String type = typeComboBox.getSelectedItem().toString();
-        String category = "Expense".equals(type) ? categoryComboBox.getSelectedItem().toString() : "-";
 
         if (date.isEmpty() || description.isEmpty() || amountText.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill all fields.");
@@ -444,12 +369,53 @@ public class MainFrame extends JFrame {
                 return;
             }
 
+            LocalDate parsedDate = parseDate(date);
+            if (parsedDate == null) {
+                return;
+            }
+
             if (!validateTransaction(type, amount)) {
                 return;
             }
 
-            ExpenseIncomeEntry entry = new ExpenseIncomeEntry(date, description, amount, type, category);
-            tableModel.addEntry(entry);
+            if (currentUser == null) {
+                JOptionPane.showMessageDialog(this, "Please log in first.");
+                return;
+            }
+
+            int recordCountBefore = currentUser.getAccount().getRecords().size();
+
+            switch (type) {
+                case "Income":
+                    transactionService.addIncome(currentUser, amount, parsedDate, description);
+                    break;
+                case "Expense":
+                    ExpenseCategory expenseCategory = (ExpenseCategory) categoryComboBox.getSelectedItem();
+                    String expensePasskey = promptPasskey("Enter passkey to add this expense:");
+                    if (expensePasskey == null) {
+                        return;
+                    }
+                    transactionService.addExpense(currentUser, amount, parsedDate, expenseCategory, description, expensePasskey);
+                    break;
+                case "Add Saving":
+                    savingService.addSavings(currentUser, amount, parsedDate, description);
+                    break;
+                case "Use Saving":
+                    String savingPasskey = promptPasskey("Enter passkey to use saving:");
+                    if (savingPasskey == null) {
+                        return;
+                    }
+                    savingService.useSavings(currentUser, parsedDate, amount, description, savingPasskey);
+                    break;
+                default:
+                    return;
+            }
+
+            if (currentUser.getAccount().getRecords().size() == recordCountBefore) {
+                return;
+            }
+
+            appendLatestRecordToTable();
 
             updateSummary();
 
@@ -462,23 +428,28 @@ public class MainFrame extends JFrame {
         }
     }
 
+
     private boolean validateTransaction(String type, double amount) {
-        double totalBudget = calculateTotalBudget();
-        double savingBalance = calculateSavingBalance();
-        double limitBalance = calculateEffectiveLimitBalance();
+        if (currentUser == null) {
+            JOptionPane.showMessageDialog(this, "Please log in first.");
+            return false;
+        }
+
+        Account account = currentUser.getAccount();
+        double totalBudget = account.getBalance();
+        double savingBalance = account.getSavingAmount();
+        double limitBalance = account.getLimitAmount();
+        double remainingTillLimit = limitBalance - calculateTotalExpense();
 
         switch (type) {
             case "Expense":
-                if (!verifyPasskey("Enter passkey to add this expense:")) {
-                    return false;
-                }
                 if (amount > totalBudget) {
                     JOptionPane.showMessageDialog(this, "Insufficient total budget.");
                     return false;
                 }
-                if (totalBudget - amount < limitBalance) {
+                if (limitBalance > 0 && amount > remainingTillLimit) {
                     JOptionPane.showMessageDialog(this,
-                            String.format("Expense rejected. Total budget cannot go below the limit balance of $%.2f.", limitBalance));
+                            String.format("Expense rejected. Remaining 'til limit is $%.2f.", remainingTillLimit));
                     return false;
                 }
                 return true;
@@ -489,9 +460,6 @@ public class MainFrame extends JFrame {
                 }
                 return true;
             case "Use Saving":
-                if (!verifyPasskey("Enter passkey to use saving:")) {
-                    return false;
-                }
                 if (amount > savingBalance) {
                     JOptionPane.showMessageDialog(this, "Use Saving amount cannot be more than your current saving balance.");
                     return false;
@@ -505,33 +473,72 @@ public class MainFrame extends JFrame {
 
     private void deleteEntry() {
         int selectedRow = table.getSelectedRow();
-        if (selectedRow != -1) {
-            tableModel.removeEntry(selectedRow);
-            updateSummary();
-        } else {
+        if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select a row to delete.");
+            return;
         }
+        if (currentUser == null) {
+            JOptionPane.showMessageDialog(this, "Please log in first.");
+            return;
+        }
+
+        Record record = getRecordForRow(selectedRow);
+        if (record == null) {
+            JOptionPane.showMessageDialog(this, "Unable to locate the selected record.");
+            return;
+        }
+
+        recordRepository.deleteRecord(record.getRecordId());
+        reloadRecordsAndBalances();
     }
 
     private void clearEntries() {
+        if (currentUser == null) {
+            JOptionPane.showMessageDialog(this, "Please log in first.");
+            return;
+        }
+
+        recordRepository.deleteRecordsByAccountId(currentUser.getAccount().getAccountId());
+        Account account = currentUser.getAccount();
+        account.clearRecords();
+        account.setBalance(0);
+        account.setSavingAmount(0);
+        accountRepository.updateBalance(currentUser, 0);
+        accountRepository.updateSaving(currentUser, 0);
+
         tableModel.clearEntries();
         updateSummary();
     }
 
     private void updateSummary() {
+        if (currentUser == null) {
+            totalIncomeLabel.setText("Total Income: $0.00");
+            totalExpenseLabel.setText("Total Expense: $0.00");
+            totalBudgetLabel.setText("Total Budget: $0.00");
+            savingBalanceLabel.setText("Saving Balance: $0.00");
+            limitBalanceLabel.setText("Limit Balance: $0.00");
+            availableBalanceLabel.setText("Remaining 'til Limit: $0.00");
+            limitField.setText("");
+            return;
+        }
+
         double totalIncome = calculateTotalIncome();
         double totalExpense = calculateTotalExpense();
         double totalBudget = calculateTotalBudget();
         double savingBalance = calculateSavingBalance();
         double limitBalance = calculateEffectiveLimitBalance();
-        double availableAfterLimit = totalBudget - limitBalance;
+        double remainingTillLimit = limitBalance > 0 ? limitBalance - totalExpense : 0;
+        if (remainingTillLimit < 0) {
+            remainingTillLimit = 0;
+        }
+
 
         totalIncomeLabel.setText(String.format("Total Income: $%.2f", totalIncome));
         totalExpenseLabel.setText(String.format("Total Expense: $%.2f", totalExpense));
         totalBudgetLabel.setText(String.format("Total Budget: $%.2f", totalBudget));
         savingBalanceLabel.setText(String.format("Saving Balance: $%.2f", savingBalance));
         limitBalanceLabel.setText(String.format("Limit Balance: $%.2f", limitBalance));
-        availableBalanceLabel.setText(String.format("Available After Limit: $%.2f", availableAfterLimit));
+        availableBalanceLabel.setText(String.format("Remaining 'til Limit: $%.2f", remainingTillLimit));
         limitField.setText(String.format("%.2f", limitBalance));
     }
 
@@ -548,84 +555,83 @@ public class MainFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "Limit balance cannot be negative.");
                 return;
             }
-            if (!verifyPasskey("Enter passkey to change the limit balance:")) {
+            String passkey = promptPasskey("Enter passkey to change the limit balance:");
+            if (passkey == null) {
+                return;
+            }
+            if (currentUser == null) {
+                JOptionPane.showMessageDialog(this, "Please log in first.");
                 return;
             }
 
-            double totalUsedSaving = calculateTotalUsedSaving();
-            if (requestedLimit < totalUsedSaving) {
-                JOptionPane.showMessageDialog(this,
-                        String.format("Limit balance cannot be less than $%.2f because Use Saving already extended it by that amount.", totalUsedSaving));
-                limitField.setText(String.format("%.2f", calculateEffectiveLimitBalance()));
-                return;
-            }
-
-            baseLimitBalance = requestedLimit - totalUsedSaving;
+            budgetLimitService.limitBudget(currentUser, requestedLimit);
             updateSummary();
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Limit balance must be a valid number.");
         }
     }
 
-    private boolean verifyPasskey(String message) {
+    private String promptPasskey(String message) {
         if (accountPasskey.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No passkey is available for this session. Please log in first.");
-            return false;
+            return null;
         }
 
         String enteredPasskey = JOptionPane.showInputDialog(this, message);
         if (enteredPasskey == null) {
-            return false;
+            return null;
         }
         if (!accountPasskey.equals(enteredPasskey.trim())) {
             JOptionPane.showMessageDialog(this, "Wrong passkey. Action cancelled.");
-            return false;
+            return null;
         }
-        return true;
+        return enteredPasskey.trim();
     }
 
     private double calculateTotalIncome() {
-        return calculateAmountByType("Income");
+        return calculateAmountByType(TransactionType.INCOME);
     }
 
     private double calculateTotalExpense() {
-        return calculateAmountByType("Expense");
+        return calculateAmountByType(TransactionType.EXPENSE);
     }
 
     private double calculateTotalSaved() {
-        return calculateAmountByType("Add Saving");
+        return calculateAmountByType(TransactionType.ADD_SAVING);
     }
 
     private double calculateTotalUsedSaving() {
-        return calculateAmountByType("Use Saving");
+        return calculateAmountByType(TransactionType.USE_SAVING);
     }
 
     private double calculateSavingBalance() {
-        return calculateTotalSaved() - calculateTotalUsedSaving();
+        return currentUser == null ? 0 : currentUser.getAccount().getSavingAmount();
     }
 
     private double calculateTotalBudget() {
-        return calculateTotalIncome() - calculateTotalExpense() - calculateTotalSaved() + calculateTotalUsedSaving();
+        return currentUser == null ? 0 : balanceService.showBalance(currentUser);
     }
 
     private double calculateEffectiveLimitBalance() {
-        return baseLimitBalance + calculateTotalUsedSaving();
+        return currentUser == null ? 0 : currentUser.getAccount().getLimitAmount();
     }
 
-    private double calculateAmountByType(String type) {
+    private double calculateAmountByType(TransactionType type) {
         double total = 0;
 
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            ExpenseIncomeEntry entry = tableModel.getEntry(i);
-            if (entry != null && type.equalsIgnoreCase(entry.getType())) {
-                total += entry.getAmount();
-            }
+        if (currentUser == null) {
+            return 0;
         }
 
+        for (Record record : currentUser.getAccount().getRecords()) {
+            if (record != null && record.getType() == type) {
+                total += record.getAmount();
+            }
+        }
         return total;
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(MainFrame::new);
+        SwingUtilities.invokeLater(LoginGUI::new);
     }
 }

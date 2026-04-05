@@ -4,14 +4,14 @@ import java.sql.DriverManager;
 
 public class DatabaseConnection {
     // Soth's Account
-    private static final String URL = "jdbc:mysql://localhost:8889/budget_tracker";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    // private static final String URL = "jdbc:mysql://localhost:8889/budget_tracker";
+    // private static final String USER = "root";
+    // private static final String PASSWORD = "root";
 
     // Rith's Account
-    // private static final String URL = "jdbc:mysql://localhost:3306/budget_tracker_system";
-    // private static final String USER = "root";
-    // private static final String PASSWORD = "@RithzQ7";
+    private static final String URL = "jdbc:mysql://localhost:3306/budget_tracker_system";
+    private static final String USER = "root";
+    private static final String PASSWORD = "@RithzQ7";
 
     // Leng's Account
     // private static final String URL = "jdbc:mysql://localhost:3306/budget_tracker";

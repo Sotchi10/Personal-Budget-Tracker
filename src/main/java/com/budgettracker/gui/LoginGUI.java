@@ -1,6 +1,7 @@
 package com.budgettracker.gui;
 
 import com.budgettracker.config.DatabaseConnection;
+import com.budgettracker.models.user.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -54,11 +55,16 @@ public class LoginGUI extends JFrame {
     }
 
     private void login() {
-        String user = usernameField.getText();
+        String user = usernameField.getText().trim();
         String pass = new String(passwordField.getPassword());
 
+        if (user.isEmpty() || pass.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Username and password are required.");
+            return;
+        }
+
         try (Connection conn = DatabaseConnection.getConnection()) {
-            String sql = "SELECT * FROM users WHERE user_name = ? AND user_password = ?";
+            String sql = "SELECT user_id, user_name, age, email, user_password, passkey FROM users WHERE user_name = ? AND user_password = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, user);
             stmt.setString(2, pass); // later hash passwords
@@ -66,7 +72,8 @@ public class LoginGUI extends JFrame {
 
             if (rs.next()) {
                 JOptionPane.showMessageDialog(this, "Login Successful!");
-                new MainFrame();
+                User loggedInUser = buildUserFromLogin(rs);
+                new MainFrame(loggedInUser);
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Login Failed!");
@@ -76,6 +83,22 @@ public class LoginGUI extends JFrame {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Database Error!");
         }
+    }
+
+    private User buildUserFromLogin(ResultSet rs) throws SQLException {
+        int userId = rs.getInt("user_id");
+        String name = rs.getString("user_name");
+        int age = rs.getInt("age");
+        if (rs.wasNull() || age < 18) {
+            age = 18;
+        }
+        String email = rs.getString("email");
+        String password = rs.getString("user_password");
+        String passkey = rs.getString("passkey");
+
+        User user = new User(name, age, email, password, passkey);
+        user.setUserId(userId);
+        return user;
     }
 
     public static void main(String[] args) {
