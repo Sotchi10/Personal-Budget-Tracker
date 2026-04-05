@@ -1,8 +1,21 @@
-package com.budgettracker.GUI;
+package com.budgettracker.gui;
 
-import javax.swing.*;
-import java.awt.*;
-import java.sql.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
+import com.budgettracker.config.DatabaseConnection;
 
 public class SignupGUI extends JFrame {
 
@@ -10,10 +23,6 @@ public class SignupGUI extends JFrame {
     private JPasswordField passwordField;
     private JButton btnCreate;
     private LoginGUI loginGUI;
-
-    private static final String URL = "jdbc:mysql://localhost:8889/budget_tracker";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root";
 
     public SignupGUI(LoginGUI loginGUI) {
         this.loginGUI = loginGUI;
@@ -69,32 +78,54 @@ public class SignupGUI extends JFrame {
         String name = nameField.getText();
         String pass = new String(passwordField.getPassword());
         String email = emailField.getText();
-        String passkey = passkeyField.getText();
+        String pass_key = passkeyField.getText();
 
-        if(name.isEmpty() || pass.isEmpty() || email.isEmpty() || passkey.isEmpty()) {
+        if(name.isEmpty() || pass.isEmpty() || email.isEmpty() || pass_key.isEmpty()) {
             JOptionPane.showMessageDialog(this, "All fields are required!");
             return;
         }
-        if(passkey.length() != 4 || !passkey.matches("\\d{4}")) {
+        if(pass_key.length() != 4 || !pass_key.matches("\\d{4}")) {
             JOptionPane.showMessageDialog(this, "Passkey must be 4 digits!");
             return;
         }
 
-        try(Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            String sql = "INSERT INTO users(user_name, user_password, email, passkey) VALUES(?,?,?,?)";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, name);
-            stmt.setString(2, pass); // later hash passwords
-            stmt.setString(3, email);
-            stmt.setString(4, passkey);
+        try(Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false);
 
-            stmt.executeUpdate();
+            String sql = "INSERT INTO users(user_name, user_password, email, passkey) VALUES(?,?,?,?)";
+            int userId;
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                stmt.setString(1, name);
+                stmt.setString(2, pass); // later hash passwords
+                stmt.setString(3, email);
+                stmt.setString(4, pass_key);
+                stmt.executeUpdate();
+
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (!rs.next()) {
+                        throw new SQLException("Failed to create user record.");
+                    }
+                    userId = rs.getInt(1);
+                }
+            }
+
+            try (PreparedStatement stmt = conn.prepareStatement("INSERT INTO accounts(user_id) VALUES(?)")) {
+                stmt.setInt(1, userId);
+                stmt.executeUpdate();
+            }
+
+            conn.commit();
             JOptionPane.showMessageDialog(this, "Account created! Please login.");
             dispose(); // close signup window
 
         } catch(SQLException ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error creating account! Email may already exist.");
+            if ("23000".equals(ex.getSQLState())) {
+                JOptionPane.showMessageDialog(this, "Could not create account. That email may already exist.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Database error while creating account: " + ex.getMessage());
+            }
         }
     }
 }

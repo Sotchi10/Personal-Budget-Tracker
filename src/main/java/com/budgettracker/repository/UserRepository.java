@@ -89,7 +89,7 @@ public class UserRepository {
     }
 
     public void saveUser(User user) {
-        String sql = "INSERT INTO users (user_name, age, email, user_password, created_at) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (user_name, age, email, user_password, passkey, created_at) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -98,7 +98,8 @@ public class UserRepository {
             stmt.setInt(2, user.getAge());
             stmt.setString(3, user.getEmail());
             stmt.setString(4, user.getPassword());
-            stmt.setDate(5, java.sql.Date.valueOf(LocalDate.now()));
+            stmt.setString(5, user.getPasskey());
+            stmt.setDate(6, java.sql.Date.valueOf(LocalDate.now()));
 
             int affectedRows = stmt.executeUpdate();
 
