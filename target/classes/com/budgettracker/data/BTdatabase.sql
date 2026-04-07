@@ -51,19 +51,8 @@ CREATE TABLE wishlists(
     FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );
 
-<<<<<<< HEAD
 SELECT * FROM Users;
 SELECT * FROM Accounts;
 SELECT * FROM Record;
 
-SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE accounts;
-TRUNCATE TABLE users;
-TRUNCATE TABLE record;
-SET FOREIGN_KEY_CHECKS = 1;
-=======
-SELECT * FROM users;
-SELECT * FROM accounts;
-SELECT * FROM record;
 
->>>>>>> d26f37d6f74b935e16ac5a84b0024ffeee04f0e2
