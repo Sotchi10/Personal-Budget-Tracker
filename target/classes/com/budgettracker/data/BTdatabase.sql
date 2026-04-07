@@ -22,26 +22,6 @@ CREATE TABLE accounts(
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
--- CREATE TABLE category(
---     category_id INT AUTO_INCREMENT PRIMARY KEY,
---     category_name VARCHAR(50),
---     category_type ENUM('FOOD','CLOTHING','TAX','TRANSPORTATION','ENTERTAINMENT','UTILITIES','HEALTHCARE','TECHNOLOGY','EDUCATION','OTHER')
--- );
--- DROP TABLE category;
-
--- CREATE TABLE record(
---     record_id INT AUTO_INCREMENT PRIMARY KEY,
---     note TEXT,
---     account_id INT NOT NULL,
---     amount DECIMAL(10,2),
---     record_date DATE,
---     transaction_type ENUM('INCOME','EXPENSE','USE_SAVING','ADD_SAVING'),
-    
---     FOREIGN KEY (account_id) REFERENCES accounts(account_id)
--- );
--- ALTER TABLE record
--- ADD COLUMN category ENUM('FOOD','CLOTHING','TAX','TRANSPORTATION','ENTERTAINMENT','UTILITIES','HEALTHCARE','TECHNOLOGY','EDUCATION','OTHER');
-
 CREATE TABLE record(
     record_id INT AUTO_INCREMENT PRIMARY KEY,
     note TEXT,
@@ -63,3 +43,8 @@ CREATE TABLE wishlists(
     
     FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );
+
+SELECT * FROM users;
+SELECT * FROM accounts;
+SELECT * FROM record;
+
