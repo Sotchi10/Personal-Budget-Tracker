@@ -1,13 +1,21 @@
 Use budget_tracker;
+<<<<<<< HEAD
 SHOW TABLES;
+=======
+-- USE budget_tracker_system
+
+>>>>>>> d26f37d6f74b935e16ac5a84b0024ffeee04f0e2
 CREATE TABLE users(
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     age INT,
     email VARCHAR(50) UNIQUE,
     user_password VARCHAR(255),
+    passkey VARCHAR(4) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
 CREATE TABLE accounts(
     account_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
@@ -17,18 +25,18 @@ CREATE TABLE accounts(
     
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
-CREATE TABLE category(
-    category_id INT AUTO_INCREMENT PRIMARY KEY,
-    category_name VARCHAR(50),
-    category_type ENUM('FOOD','CLOTHING','TAX','TRANSPORTATION','ENTERTAINMENT','UTILITIES','HEALTHCARE','TECHNOLOGY','EDUCATION','OTHER')
-);
+
 CREATE TABLE record(
     record_id INT AUTO_INCREMENT PRIMARY KEY,
     account_id INT NOT NULL,
     transaction_type ENUM('INCOME','EXPENSE','USE_SAVING','ADD_SAVING'),
+<<<<<<< HEAD
     amount DECIMAL(10,2),
     note TEXT,
     record_date DATE,
+=======
+    category ENUM('FOOD','CLOTHING','TAX','TRANSPORTATION','ENTERTAINMENT','UTILITIES','HEALTHCARE','TECHNOLOGY','EDUCATION','OTHER'),
+>>>>>>> d26f37d6f74b935e16ac5a84b0024ffeee04f0e2
     
     FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );
@@ -43,6 +51,7 @@ CREATE TABLE wishlists(
     FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );
 
+<<<<<<< HEAD
 SELECT * FROM Users;
 SELECT * FROM Accounts;
 SELECT * FROM Record;
@@ -52,3 +61,9 @@ TRUNCATE TABLE accounts;
 TRUNCATE TABLE users;
 TRUNCATE TABLE record;
 SET FOREIGN_KEY_CHECKS = 1;
+=======
+SELECT * FROM users;
+SELECT * FROM accounts;
+SELECT * FROM record;
+
+>>>>>>> d26f37d6f74b935e16ac5a84b0024ffeee04f0e2

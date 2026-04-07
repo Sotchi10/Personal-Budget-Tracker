@@ -2,6 +2,7 @@ package com.budgettracker.auth;
 
 import com.budgettracker.models.user.*;
 public class AccountAuth {
+
     public boolean verifyPasskey(User user, String inputPasskey) {
         return user.getPasskey() != null && user.getPasskey().equals(inputPasskey);
     }

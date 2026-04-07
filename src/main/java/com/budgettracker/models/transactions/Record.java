@@ -11,9 +11,9 @@ public abstract class Record {
     //Constructors
     public Record(LocalDate date, double amount, String note) {
         if (date == null)
-            throw new IllegalArgumentException("none speicifed tdateype");
+            throw new IllegalArgumentException("none specified datetype");
         if (note.isBlank())
-            throw new IllegalArgumentException("none speicifed note");
+            throw new IllegalArgumentException("none specified note");
         if (amount <= 0)
             throw new IllegalArgumentException();
         this.note = note;

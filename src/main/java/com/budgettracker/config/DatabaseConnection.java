@@ -3,9 +3,25 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class DatabaseConnection {
-    private static final String URL = "jdbc:mysql://localhost:8889/budget_tracker";
+    // Soth's Account
+    // private static final String URL = "jdbc:mysql://localhost:8889/budget_tracker";
+    // private static final String USER = "root";
+    // private static final String PASSWORD = "root";
+
+    // Rith's Account
+    private static final String URL = "jdbc:mysql://localhost:3306/budget_tracker_system";
     private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    private static final String PASSWORD = "@RithzQ7";
+
+    // Leng's Account
+    // private static final String URL = "jdbc:mysql://localhost:3306/budget_tracker";
+    // private static final String USER = "root";
+    // private static final String PASSWORD = "sinhsinh@99";
+
+    // Ching's Account
+    // private static final String URL = "jdbc:mysql://localhost:3306/budget_tracker";
+    // private static final String USER = "root";
+    // private static final String PASSWORD = "Chea/2006@$kcc";
 
     public static Connection getConnection() {
         try {

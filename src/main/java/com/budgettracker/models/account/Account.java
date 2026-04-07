@@ -68,6 +68,20 @@ public class Account {
         return savingAmount;
     }
 
+    public void setSavingAmount(double amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Invalid saving amount");
+        }
+        savingAmount = amount;
+    }
+
+    public void setBalance(double amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Invalid balance amount");
+        }
+        balance = amount;
+    }
+
     public void addSaving(double amount) {
         if (amount < 0)
             throw new IllegalArgumentException("Invalid saving amount");
@@ -93,6 +107,10 @@ public class Account {
 
     public List<Record> getRecords() {
         return Collections.unmodifiableList(records);
+    }
+
+    public void clearRecords() {
+        records.clear();
     }
 
     public double getTotalExpense() {
